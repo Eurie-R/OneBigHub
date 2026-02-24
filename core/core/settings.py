@@ -134,6 +134,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+AUTH_USER_MODEL = 'accounts.User'
+
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
