@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Allauth - handles Google OAuth login/logout
-    path('accounts/', include('allauth.urls')),
+    #path('accounts/', include('allauth.urls')),
 
     # One Big Hub apps
     path('api/users/', include('users.urls')),     # Feature 4.1

@@ -41,13 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     #Third-Party
     'rest_framework',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google',
 
     #OneBigHub Apps
     'users',
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
 
 ]
 
-SITE_ID = 1
+#SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +69,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware', #Allauth requirement
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -110,12 +110,7 @@ DATABASES = {
 #AUTHENTICATION
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    #'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 # Restrict login to Ateneo email domains only 
@@ -126,13 +121,24 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
-        'APP': {
-            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
-            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
-            'key': '',
-        }
+        'VERIFIED_EMAIL': True,
     }
 }
+
+#SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
+#SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
+#ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
+
+
+#'APP': {
+#            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+#            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+#            'key': '',
+#        }
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -147,7 +153,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAteneoUser',
+        'users.permissions.IsAteneoUser',
     ],
 }
 
