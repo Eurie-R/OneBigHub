@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% block title %}Complete Your Profile — One Big Hub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex">
+
+    <!-- Sidebar (same as dashboard) -->
+    <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
+        <div class="px-6 py-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <span class="text-ateneo-blue font-bold text-sm">A</span>
+                </div>
+                <span class="text-white font-display font-bold">One Big Hub</span>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <a href="/dashboard/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Dashboard
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Proposals
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Venues
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Activity Feed
+            </a>
+            <a href="/profile/setup/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+                <span></span> Profile Settings
+            </a>
+        </nav>
+        <div class="px-4 py-6 border-t border-white/10">
+            <button onclick="logout()"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 max-w-2xl">
+
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-ateneo-blue font-display">Profile Settings</h1>
+            <p class="text-gray-500 text-sm mt-1">
+                Fill in your details so other users and admins can identify your
+                {% if user.is_org %}organization{% else %}office{% endif %}.
+            </p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="success-message"
+             class="hidden bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg mb-6">
+        </div>
+        <div id="error-message"
+             class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6">
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+            <!-- Account Info (read only) -->
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-700 mb-3">Account Information</h2>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Email</p>
+                        <p class="font-medium text-gray-800">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Role</p>
+                        <p class="font-medium text-gray-800">
+                            {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            {% if user.is_org %}
+            <!-- Organization Form -->
+            <form id="profile-form" class="space-y-5">
+                <h2 class="text-sm font-semibold text-gray-700 mb-3">Organization Details</h2>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Organization Name <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" name="org_name"
+                           value="{{ profile.org_name }}"
+                           placeholder="e.g. Ateneo Computer Society"
+                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Moderator Name <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" name="moderator_name"
+                           value="{{ profile.moderator_name }}"
+                           placeholder="Faculty moderator full name"
+                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                    <input type="email" name="contact_email"
+                           value="{{ profile.contact_email }}"
+                           placeholder="org-email@student.ateneo.edu"
+                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Building</label>
+                        <input type="text" name="building"
+                               value="{{ profile.building }}"
+                               placeholder="e.g. SEC"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Room Number</label>
+                        <input type="text" name="room_number"
+                               value="{{ profile.room_number }}"
+                               placeholder="e.g. 201"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" rows="3"
+                              placeholder="Brief description of your organization..."
+                              class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition resize-none">{{ profile.description }}</textarea>
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-ateneo-blue text-white py-2.5 rounded-lg font-semibold hover:bg-blue-900 transition text-sm">
+                    Save Profile
+                </button>
+            </form>
+
+            {% else %}
+            <!-- Admin Office Form -->
+            <form id="profile-form" class="space-y-5">
+                <h2 class="text-sm font-semibold text-gray-700 mb-3">Office Details</h2>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Office Name <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" name="office_name"
+                           value="{{ profile.office_name }}"
+                           placeholder="e.g. Central Facilities Management Office"
+                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Office Type</label>
+                    <select name="office_type"
+                            class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition">
+                        <option value="CFMO" {% if profile.office_type == 'CFMO' %}selected{% endif %}>
+                            Central Facilities Management Office
+                        </option>
+                        <option value="OSA" {% if profile.office_type == 'OSA' %}selected{% endif %}>
+                            Office of Student Activities
+                        </option>
+                        <option value="CSMO" {% if profile.office_type == 'CSMO' %}selected{% endif %}>
+                            Campus Security Management Office
+                        </option>
+                        <option value="UMCO" {% if profile.office_type == 'UMCO' %}selected{% endif %}>
+                            University Marketing & Communications
+                        </option>
+                        <option value="OTHER" {% if profile.office_type == 'OTHER' %}selected{% endif %}>
+                            Other
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                    <input type="email" name="contact_email"
+                           value="{{ profile.contact_email }}"
+                           placeholder="office-email@ateneo.edu"
+                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Building</label>
+                        <input type="text" name="building"
+                               value="{{ profile.building }}"
+                               placeholder="e.g. Quezon Hall"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Room Number</label>
+                        <input type="text" name="room_number"
+                               value="{{ profile.room_number }}"
+                               placeholder="e.g. 101"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light transition"/>
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-ateneo-blue text-white py-2.5 rounded-lg font-semibold hover:bg-blue-900 transition text-sm">
+                    Save Profile
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+    </main>
+</div>
+
+<script>
+    const apiUrl = "{% if user.is_org %}/api/users/profile/org/{% else %}/api/users/profile/admin/{% endif %}";
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        const successDiv = document.getElementById('success-message');
+        const errorDiv = document.getElementById('error-message');
+        const button = e.target.querySelector('button');
+
+        button.textContent = 'Saving...';
+        button.disabled = true;
+        successDiv.classList.add('hidden');
+        errorDiv.classList.add('hidden');
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                successDiv.textContent = 'Profile saved successfully!';
+                successDiv.classList.remove('hidden');
+            } else {
+                let errorMsg = '';
+                for (const [field, messages] of Object.entries(result)) {
+                    errorMsg += `${field}: ${messages}\n`;
+                }
+                errorDiv.textContent = errorMsg || 'Failed to save profile.';
+                errorDiv.classList.remove('hidden');
+            }
+        } catch (err) {
+            errorDiv.textContent = 'Something went wrong. Please try again.';
+            errorDiv.classList.remove('hidden');
+        } finally {
+            button.textContent = 'Save Profile';
+            button.disabled = false;
+        }
+    });
+
+    async function logout() {
+        await fetch('/api/users/logout/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        });
+        window.location.href = '/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

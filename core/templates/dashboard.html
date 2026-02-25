@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — One Big Hub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
+        <!-- Logo -->
+        <div class="px-6 py-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <span class="text-ateneo-blue font-bold text-sm">A</span>
+                </div>
+                <span class="text-white font-display font-bold">One Big Hub</span>
+            </div>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <a href="/dashboard/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+                <span></span> Dashboard
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Proposals
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Venues
+            </a>
+            <a href="#"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Activity Feed
+            </a>
+            <a href="/profile/setup/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Profile Settings
+</a>
+            
+        </nav>
+
+        <!-- Logout -->
+        <div class="px-4 py-6 border-t border-white/10">
+            <button onclick="logout()"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
+                <span></span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-ateneo-blue font-display">
+                Welcome back, {{ user.username }}
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">
+                {{ user.email }} ·
+                <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                    {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
+                </span>
+            </p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-gray-800">Your Profile</h2>
+                <span class="text-xs text-gray-400">
+                    {% if profile and profile.org_name or profile and profile.office_name %}
+                        Complete
+                    {% else %}
+                        Incomplete — please fill in your details
+                    {% endif %}
+                </span>
+            </div>
+
+            {% if user.is_org %}
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Organization</p>
+                        <p class="font-medium text-gray-800">{{ profile.org_name|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Moderator</p>
+                        <p class="font-medium text-gray-800">{{ profile.moderator_name|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
+                        <p class="font-medium text-gray-800">
+                            {% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
+                        <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office</p>
+                        <p class="font-medium text-gray-800">{{ profile.office_name|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office Type</p>
+                        <p class="font-medium text-gray-800">{{ profile.get_office_type_display|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
+                        <p class="font-medium text-gray-800">
+                            {% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
+                        <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Coming Soon Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
+                <p class="text-2xl mb-2"></p>
+                <h3 class="font-semibold text-gray-700 mb-1">Proposals</h3>
+                <p class="text-xs text-gray-400">Coming in Iteration 2</p>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
+                <p class="text-2xl mb-2"></p>
+                <h3 class="font-semibold text-gray-700 mb-1">Venue Reservations</h3>
+                <p class="text-xs text-gray-400">Coming in Iteration 3</p>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
+                <p class="text-2xl mb-2"></p>
+                <h3 class="font-semibold text-gray-700 mb-1">Activity Feed</h3>
+                <p class="text-xs text-gray-400">Coming in Iteration 3</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    async function logout() {
+        await fetch('/api/users/logout/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        });
+        window.location.href = '/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
