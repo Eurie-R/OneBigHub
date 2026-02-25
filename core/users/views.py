@@ -1,19 +1,66 @@
-# users/views.py
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
-from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from django.shortcuts import render, redirect
+from .serializers import (
+    RegisterSerializer, LoginSerializer, UserSerializer,
+    OrganizationProfileSerializer, AdminOfficeProfileSerializer
+)
+from .models import OrganizationProfile, AdminOfficeProfile
+from .permissions import IsProfileOwner
 
+
+# ─────────────────────────────────────────────
+# Template Views (renders HTML pages)
+# ─────────────────────────────────────────────
+
+def landing_page(request):
+    if request.user.is_authenticated:
+        return redirect('/dashboard/')
+    return render(request, 'landing.html')
+
+
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('/dashboard/')
+    return render(request, 'users/login.html')
+
+
+def register_page(request):
+    if request.user.is_authenticated:
+        return redirect('/dashboard/')
+    return render(request, 'users/register.html')
+
+
+def dashboard_page(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    context = {'user': request.user}
+
+    if request.user.is_org:
+        try:
+            context['profile'] = request.user.org_profile
+        except OrganizationProfile.DoesNotExist:
+            context['profile'] = None
+
+    elif request.user.is_admin_office:
+        try:
+            context['profile'] = request.user.admin_profile
+        except AdminOfficeProfile.DoesNotExist:
+            context['profile'] = None
+
+    return render(request, 'dashboard.html', context)
+
+
+# ─────────────────────────────────────────────
+# API Views (returns JSON)
+# ─────────────────────────────────────────────
 
 class RegisterView(APIView):
-    """
-    POST /api/users/register/
-    Registers a new user with an Ateneo email.
-    REQ: SRS 4.1.2 Sub-Feature 3, 4, 5
-    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -28,11 +75,6 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
-    """
-    POST /api/users/login/
-    Logs in a user with email and password.
-    REQ: SRS 4.1.1
-    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -40,16 +82,13 @@ class LoginView(APIView):
         if serializer.is_valid():
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
-
             user = authenticate(request, username=email, password=password)
-
             if user is not None:
                 login(request, user)
                 return Response({
                     "message": "Login successful.",
                     "user": UserSerializer(user).data
                 }, status=status.HTTP_200_OK)
-
             return Response(
                 {"error": "Invalid email or password."},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -58,26 +97,90 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
-    """
-    POST /api/users/logout/
-    Logs out the current user.
-    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         logout(request)
-        return Response(
-            {"message": "Logged out successfully."},
-            status=status.HTTP_200_OK
-        )
+        return Response({"message": "Logged out successfully."})
 
 
 class CurrentUserView(APIView):
-    """
-    GET /api/users/me/
-    Returns the currently logged in user.
-    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+
+class OrganizationProfileView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwner]
+
+    def get(self, request):
+        try:
+            profile = request.user.org_profile
+            serializer = OrganizationProfileSerializer(profile)
+            return Response(serializer.data)
+        except OrganizationProfile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def patch(self, request):
+        try:
+            profile = request.user.org_profile
+            serializer = OrganizationProfileSerializer(
+                profile, data=request.data, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except OrganizationProfile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class AdminOfficeProfileView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwner]
+
+    def get(self, request):
+        try:
+            profile = request.user.admin_profile
+            serializer = AdminOfficeProfileSerializer(profile)
+            return Response(serializer.data)
+        except AdminOfficeProfile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def patch(self, request):
+        try:
+            profile = request.user.admin_profile
+            serializer = AdminOfficeProfileSerializer(
+                profile, data=request.data, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except AdminOfficeProfile.DoesNotExist:
+            return Response(
+                {"error": "Profile not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+def profile_setup_page(request):
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    context = {'user': request.user}
+
+    if request.user.is_org:
+        context['profile'] = request.user.org_profile
+    elif request.user.is_admin_office:
+        context['profile'] = request.user.admin_profile
+
+    return render(request, 'users/profile_setup.html', context)
