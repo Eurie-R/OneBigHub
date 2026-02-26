@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +23,9 @@
             }
         }
     </script>
+
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
