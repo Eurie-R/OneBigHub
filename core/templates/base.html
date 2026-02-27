@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,14 +25,14 @@
     </script>
 
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-    
+
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="flex flex-col min-h-screen">
     {% block content %}{% endblock %}
 </body>
 </html>

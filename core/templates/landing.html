@@ -8,10 +8,10 @@
 
     <!-- Header -->
     <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="px-8 py-1 flex items-center justify-between">
             <!-- Left: One Big Hub -->
             <div class="flex items-center gap-4">
-                <img src="{% static 'images/school_crest.png' %}" alt="School Crest" class="w-10 h-10">
+                <img src="{% static 'core/images/school_crest.png' %}" class="w-28">
                 <span class="text-ateneo-blue font-bold text-xl">One Big Hub</span>
             </div>
 
@@ -31,31 +31,38 @@
 
     <!-- Home Bar / Navigation -->
     <nav class="bg-ateneo-blue text-white">
-        <div class="max-w-7xl mx-auto px-6 flex gap-6 py-3">
-            <a href="/venues/" class="hover:underline">Venue Reservations</a>
-            <a href="/proposals/" class="hover:underline">Project Proposals</a>
-            <a href="/feed/" class="hover:underline">Activity Feed</a>
+        <div class="max-w-7xl mx-auto px-6 flex justify-center gap-48 py-5">
+            <a href="/venues/" class="hover:underline">VENUE RESERVATION</a>
+            <a href="/proposals/" class="hover:underline">PROJECT PROPOSAL</a>
+            <a href="/feed/" class="hover:underline">ACTIVITY FEED</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="flex-1 relative bg-cover bg-center bg-[url('/static/core/images/school_landscape.jpg')]">
-        <div class="bg-black/40 flex flex-col items-center justify-center text-center min-h-[500px] px-6">
-            <h1 class="text-5xl md:text-6xl font-display text-white font-bold mb-4">
-                One place for every <span class="text-ateneo-gold">org event</span>.
-            </h1>
-            <p class="text-white/80 max-w-xl mb-8">
-                Venue reservations, project proposals, and org activities — all in one centralized platform for Ateneo student organizations.
-            </p>
-            <a href="/events/"
-               class="px-8 py-3 bg-ateneo-gold text-white font-semibold rounded-lg hover:bg-amber-500 transition shadow-lg">
-                Browse Org Events
-            </a>
-        </div>
-    </section>
+    <!--Main section -->
+    <main class="flex-1 flex flex-col">
+        <!-- Hero Section -->
+        <section class="relative flex-1 flex bg-cover bg-center bg-[url('/static/core/images/school_landscape.jpg')] items-center justify-center">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-black/40"></div>
+
+            <!-- Content -->
+            <div class="relative flex flex-col items-center text-center px-6">
+                <h1 class="text-5xl md:text-6xl font-display text-white font-bold mb-4">
+                    One place for every <span class="text-ateneo-gold">org event</span>.
+                </h1>
+                <p class="text-white/80 max-w-xl mb-8">
+                    Venue reservations, project proposals, and org activities — all in one centralized platform for Ateneo student organizations.
+                </p>
+                <a href="/events/"
+                class="px-8 py-3 bg-ateneo-gold text-white font-semibold rounded-lg hover:bg-amber-500 transition shadow-lg">
+                    Browse Org Events
+                </a>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-ateneo-blue text-white/50 text-center py-6 text-sm">
+    <footer class="bg-ateneo-blue text-white/50 text-center py-3 text-sm">
         © 2026 One Big Hub · Ateneo de Manila University
     </footer>
 </div>
