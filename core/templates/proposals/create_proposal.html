@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Create Project Proposal</h1>
+    
+    {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+                <div class="p-4 rounded shadow {% if message.tags == 'error' %}bg-red-100 text-red-700 border-l-4 border-red-500{% else %}bg-green-100 text-green-700 border-l-4 border-green-500{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'proposals:create_proposal' %}" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Project Title</label>
+                {{ form.title }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.title.errors.0 }}</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Reviewing Office</label>
+                {{ form.reviewing_office }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.reviewing_office.errors.0 }}</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Start Date & Time</label>
+                {{ form.start_datetime }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.start_datetime.errors.0 }}</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">End Date & Time</label>
+                {{ form.end_datetime }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.end_datetime.errors.0 }}</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Nature of Activity</label>
+                {{ form.nature_of_activity }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.nature_of_activity.errors.0 }}</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Target Attendees</label>
+                {{ form.target_attendees }}
+                <p class="text-red-500 text-xs italic mt-1">{{ form.target_attendees.errors.0 }}</p>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Objectives</label>
+            {{ form.objectives }}
+            <p class="text-red-500 text-xs italic mt-1">{{ form.objectives.errors.0 }}</p>
+        </div>
+
+        <div class="flex items-center justify-between mt-8 border-t pt-6">
+            <button type="submit" name="action" value="draft" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150">
+                Save Draft
+            </button>
+            
+            <button type="submit" name="action" value="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150">
+                Submit Proposal
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
