@@ -14,7 +14,7 @@
         </div>
     {% endif %}
 
-    <form method="POST" action="{% url 'proposals:create_proposal' %}" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+    <form method="POST" action="{% url 'proposals:create_proposal' %}" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"></form>
         {% csrf_token %}
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -51,9 +51,15 @@
         </div>
 
         <div class="mb-6">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Objectives</label>
-            {{ form.objectives }}
-            <p class="text-red-500 text-xs italic mt-1">{{ form.objectives.errors.0 }}</p>
+            <label class="block text-gray-700 text-sm font-bold mb-2">Supporting Documents (Letters, Permits, etc.)</label>
+            <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition duration-150">
+                <svg class="w-10 h-10 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                <p class="text-sm text-gray-600 font-medium">Drag and drop files here, or click to browse</p>
+                <p class="text-xs text-gray-400 mt-1">Max 5MB per file. (PDF, DOCX, JPG, PNG)</p>
+                
+                <input type="file" id="file-input" name="attachments" multiple class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+            </div>
+            <ul id="file-list" class="mt-4 text-sm text-gray-600 space-y-1 font-medium"></ul>
         </div>
 
         <div class="flex items-center justify-between mt-8 border-t pt-6">
@@ -68,3 +74,47 @@
     </form>
 </div>
 {% endblock %}
+
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+
+    // Click to open file browser
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Highlight drop zone on drag over
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-blue-500', 'bg-blue-50');
+    });
+
+    // Remove highlight on drag leave
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        }
+    });
+
+    // Handle selected files via click
+    fileInput.addEventListener('change', updateFileList);
+
+    function updateFileList() {
+        fileList.innerHTML = '';
+        for (const file of fileInput.files) {
+            const li = document.createElement('li');
+            li.textContent = `📎 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            fileList.appendChild(li);
+        }
+    }
+</script>
