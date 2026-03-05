@@ -68,3 +68,23 @@ class Proposal(models.Model):
 
     def __str__(self):
         return self.title if self.title else f"Untitled Draft - {self.organization.org_name}"
+    
+
+# ─────────────────────────────────────────────
+# Attachment Class Model
+# REQ: SRS 4.3.4 - REQ-3, REQ-6
+# ─────────────────────────────────────────────
+class Attachment(models.Model):
+    proposal = models.ForeignKey(
+        Proposal, 
+        on_delete=models.CASCADE, 
+        related_name='attachments'
+    )
+    file = models.FileField(
+        upload_to='proposals/attachments/%Y/%m/', 
+        validators=[validate_file_size_and_extension]
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment for {self.proposal.title}"
