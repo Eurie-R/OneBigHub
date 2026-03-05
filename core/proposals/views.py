@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Proposal
+from .models import Proposal, Attachment
 from .forms import ProposalForm
 
 
@@ -30,6 +30,11 @@ def create_proposal(request):
                 messages.success(request, "Draft saved successfully.")
                 
             proposal.save()
+
+            # REQ-3 & REQ-5: Handle multiple file uploads
+            for f in request.FILES.getlist('attachments'):
+                Attachment.objects.create(proposal=proposal, file=f)
+
             return redirect('dashboard')
         else:
             # REQ-7 & REQ-11: If form is invalid display errors
