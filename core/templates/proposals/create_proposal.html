@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto py-8">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">Create Project Proposal</h1>
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">
+        {% if edit_mode %}Edit Proposal Draft{% else %}Create Project Proposal{% endif %}
+    </h1>
     
     {% if messages %}
         <div class="mb-6">
@@ -14,7 +16,7 @@
         </div>
     {% endif %}
 
-    <form method="POST" action="{% url 'proposals:create_proposal' %}" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"></form>
+    <form method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
         {% csrf_token %}
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
