@@ -1,7 +1,9 @@
 from django.urls import path
+from . import views
 
-app_name = 'accounts'
+app_name = 'proposals'
 
 urlpatterns = [
-    # Routes will be added in Iteration 1 & 2
+    path('create/', views.create_proposal, name='create_proposal'),
+    path('<int:pk>/edit/', views.edit_proposal, name='edit_proposal'),
 ]
