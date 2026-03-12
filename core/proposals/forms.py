@@ -21,25 +21,26 @@ class ProposalForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        
-        # Check what the user clicked (draft or submit)
-        action = self.data.get('action')
+        start = cleaned_data.get('start_datetime')
+        end = cleaned_data.get('end_datetime')
 
-        # REQ-2 & REQ-10: If submitting, validate that all fields are filled
-        if action == 'submit':
-            required_fields = [
-                'title', 'nature_of_activity', 'target_attendees', 
-                'objectives', 'start_datetime', 'end_datetime', 'reviewing_office'
-            ]
-            for field in required_fields:
-                if not cleaned_data.get(field):
-                    self.add_error(field, 'This field is required for final submission.')
-                    
-            # Date validation
-            start = cleaned_data.get('start_datetime')
-            end = cleaned_data.get('end_datetime')
-            if start and end and start >= end:
-                self.add_error('end_datetime', 'End time must be after start time.')
+        if start and end:
+            if end <= start:
+                self.add_error('end_datetime', "End time must be after start time.")
+            
+            # Check for overlapping proposals
+            from .models import Proposal
+            overlapping_proposals = Proposal.objects.filter(
+                status__in=[Proposal.Status.SUBMITTED, Proposal.Status.APPROVED],
+                start_datetime__lt=end,
+                end_datetime__gt=start
+            )
 
-        # REQ-9: If draft, we bypass the required checks (they are allowed to be empty)
+            # If editing a draft exclude the current proposal from the check
+            if self.instance and self.instance.pk:
+                overlapping_proposals = overlapping_proposals.exclude(pk=self.instance.pk)
+
+            if overlapping_proposals.exists():
+                self.add_error(None, "This time slot has already been booked by another proposal.")
+
         return cleaned_data
