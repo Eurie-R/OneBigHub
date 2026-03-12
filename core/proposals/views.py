@@ -44,7 +44,7 @@ def create_proposal(request):
             for f in uploaded_files:
                 Attachment.objects.create(proposal=proposal, file=f)
 
-            return redirect('admin:index')
+            return redirect('proposals:proposal_detail', pk=proposal.pk)
     else:
         form = ProposalForm()
 
@@ -58,7 +58,7 @@ def edit_proposal(request, pk):
         org_profile = request.user.org_profile
     except AttributeError:
         messages.error(request, "You must be linked to an Organization.")
-        return redirect('admin:index')
+        return redirect('dashboard')
 
     # Get the draft if it belongs to this user's organization
     proposal = get_object_or_404(Proposal, pk=pk, organization=org_profile)
@@ -66,7 +66,7 @@ def edit_proposal(request, pk):
     # Don't allow editing if its not a draft
     if proposal.status != Proposal.Status.DRAFT:
         messages.error(request, "You can only edit draft proposals.")
-        return redirect('admin:index')
+        return redirect('proposals:proposal_detail')
 
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=proposal)
@@ -99,9 +99,15 @@ def edit_proposal(request, pk):
             for f in new_files:
                 Attachment.objects.create(proposal=proposal, file=f)
 
-            return redirect('admin:index')
+            return redirect('proposals:proposal_detail', pk=proposal.pk)
     else:
         # Load the draft data
         form = ProposalForm(instance=proposal)
 
     return render(request, 'proposals/create_proposal.html', {'form': form, 'edit_mode': True})
+
+@login_required
+def proposal_detail(request, pk):
+    proposal = get_object_or_404(Proposal, pk=pk)
+    attachments = Attachment.objects.filter(proposal=proposal)
+    return render(request, 'proposals/proposal_detail.html', {'proposal': proposal, 'attachments': attachments})

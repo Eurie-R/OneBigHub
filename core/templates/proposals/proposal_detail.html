@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Proposal – {{ proposal.title|default:"Untitled Draft" }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-8">
+
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        {{ proposal.title|default:"Untitled Draft" }}
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Submitted by <span class="font-medium">{{ proposal.organization.org_name }}</span>
+      </p>
+    </div>
+
+    <!-- Status Badge -->
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+      {% if proposal.status == 'APPROVED' %}bg-green-100 text-green-800
+      {% elif proposal.status == 'REJECTED' %}bg-red-100 text-red-800
+      {% elif proposal.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
+      {% elif proposal.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
+      {% else %}bg-gray-100 text-gray-600{% endif %}">
+      {{ proposal.get_status_display }}
+    </span>
+  </div>
+
+  <!-- Proposal Details Card -->
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm divide-y divide-gray-100">
+
+    <div class="px-6 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Nature of Activity</p>
+        <p class="text-gray-800">{{ proposal.nature_of_activity|default:"—" }}</p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Target Attendees</p>
+        <p class="text-gray-800">{{ proposal.target_attendees|default:"—" }}</p>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Start Date & Time</p>
+        <p class="text-gray-800">
+          {% if proposal.start_datetime %}
+            {{ proposal.start_datetime|date:"F j, Y" }} at {{ proposal.start_datetime|time:"g:i A" }}
+          {% else %}—{% endif %}
+        </p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">End Date & Time</p>
+        <p class="text-gray-800">
+          {% if proposal.end_datetime %}
+            {{ proposal.end_datetime|date:"F j, Y" }} at {{ proposal.end_datetime|time:"g:i A" }}
+          {% else %}—{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Reviewing Office</p>
+        <p class="text-gray-800">{{ proposal.reviewing_office|default:"—" }}</p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Date Submitted</p>
+        <p class="text-gray-800">{{ proposal.created_at|date:"F j, Y" }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Attachments -->
+  <div class="mt-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-3">Supporting Documents</h2>
+
+    {% if attachments %}
+      <ul class="space-y-2">
+        {% for attachment in attachments %}
+          <li class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm">
+            <div class="flex items-center gap-3">
+              <!-- File icon -->
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm text-gray-700 truncate max-w-xs">
+                {{ attachment.file.name|slice:"30:" }}
+              </span>
+            </div>
+            <a href="{{ attachment.file.url }}"
+               target="_blank"
+               class="text-sm text-blue-600 hover:underline font-medium ml-4 flex-shrink-0">
+              View
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-sm text-gray-500 italic">No attachments uploaded.</p>
+    {% endif %}
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-8 flex gap-3">
+    {% if proposal.status == 'DRAFT' %}
+      <a href="{% url 'proposals:edit_proposal' proposal.pk %}"
+         class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+        Edit Draft
+      </a>
+    {% endif %}
+    <a href="javascript:history.back()"
+       class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+      Back
+    </a>
+  </div>
+
+</div>
+{% endblock %}

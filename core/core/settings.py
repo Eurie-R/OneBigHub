@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    #'django.contrib.sites',
 
     #Third-Party
     'rest_framework',
@@ -194,6 +194,14 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+USE_L10N = False
+DATETIME_INPUT_FORMATS = [
+    '%Y-%m-%dT%H:%M',      # HTML5 datetime-local without seconds (Chrome, Firefox)
+    '%Y-%m-%dT%H:%M:%S',   # HTML5 datetime-local with seconds (some browsers/OS)
+    '%Y-%m-%d %H:%M:%S',   # Standard Django fallback
+    '%Y-%m-%d %H:%M',      # Standard Django fallback without seconds
+]
 
 
 # Static files (CSS, JavaScript, Images)

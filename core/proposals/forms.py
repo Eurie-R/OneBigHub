@@ -3,6 +3,22 @@ from .models import Proposal
 
 
 class ProposalForm(forms.ModelForm):
+    start_datetime = forms.DateTimeField(
+        required=False,
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'],
+        widget=forms.DateTimeInput(
+            attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'},
+            format='%Y-%m-%dT%H:%M'
+        )
+    )
+    end_datetime = forms.DateTimeField(
+        required=False,
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'],
+        widget=forms.DateTimeInput(
+            attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'},
+            format='%Y-%m-%dT%H:%M'
+        )
+    )
     class Meta:
         model = Proposal
         fields = [
@@ -10,8 +26,8 @@ class ProposalForm(forms.ModelForm):
             'objectives', 'start_datetime', 'end_datetime', 'reviewing_office'
         ]
         widgets = {
-            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'}),
-            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'}),
+            #'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'}),
+            #'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input border rounded p-2 w-full'}),
             'title': forms.TextInput(attrs={'class': 'form-input border rounded p-2 w-full'}),
             'nature_of_activity': forms.TextInput(attrs={'class': 'form-input border rounded p-2 w-full'}),
             'target_attendees': forms.TextInput(attrs={'class': 'form-input border rounded p-2 w-full'}),
