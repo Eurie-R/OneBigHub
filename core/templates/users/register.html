@@ -1,137 +1,165 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Register — One Big Hub{% endblock %}
 
 {% block content %}
-<div class="min-h-screen gradient-bg flex items-center justify-center px-4">
-    <div class="w-full max-w-md">
+<div class="min-h-screen flex">
 
-        <!-- Card -->
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
+    <!-- Left Register Panel -->
+    <div class="flex items-center justify-center w-full md:w-1/2 px-6 bg-ateneo-blue">
+        <div class="w-full max-w-md animate-fade-in-up">
 
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <div class="w-14 h-14 bg-ateneo-blue rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-white font-bold text-2xl font-display">A</span>
+            <!-- Card -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8">
+
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <img src="{% static 'core/images/school_crest.png' %}" class="w-36 mx-auto mb-4">
+                    <h1 class="text-2xl font-bold text-ateneo-blue font-display">Create your account</h1>
+                    <p class="text-gray-500 text-sm mt-1">Use your official Ateneo email to register</p>
                 </div>
-                <h1 class="text-2xl font-bold text-ateneo-blue font-display">Create your account</h1>
-                <p class="text-gray-500 text-sm mt-1">Use your official Ateneo email to register</p>
+
+                <!-- Role Info Banner -->
+                <div class="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 mb-6 text-xs text-blue-700">
+                    <strong>@student.ateneo.edu</strong> → Student Organization account<br/>
+                    <strong>@ateneo.edu</strong> → Administrative Office account
+                </div>
+
+                <!-- Error/Success Messages -->
+                <div id="error-message"
+                     class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+                </div>
+                <div id="success-message"
+                     class="hidden bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg mb-4">
+                </div>
+
+                <!-- Form -->
+                <form id="register-form" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ateneo Email</label>
+                        <input type="email" id="email" placeholder="yourname@student.ateneo.edu"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
+                        <p id="email-error" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" placeholder="••••••••"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="password2" placeholder="••••••••"
+                               class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-ateneo-gold text-white py-2.5 rounded-lg font-semibold hover:bg-yellow-600 transition text-sm">
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Footer -->
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    Already have an account?
+                    <a href="/login/" class="text-ateneo-light font-semibold hover:underline">Sign in</a>
+                </p>
             </div>
 
-            <!-- Role Info Banner -->
-            <div class="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 mb-6 text-xs text-blue-700">
-                <strong>@student.ateneo.edu</strong> → Student Organization account<br/>
-                <strong>@ateneo.edu</strong> → Administrative Office account
-            </div>
-
-            <!-- Error/Success Messages -->
-            <div id="error-message"
-                 class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
-            </div>
-            <div id="success-message"
-                 class="hidden bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg mb-4">
-            </div>
-
-            <!-- Form -->
-            <form id="register-form" class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Ateneo Email</label>
-                    <input type="email" id="email" placeholder="yourname@student.ateneo.edu"
-                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
-                    <p id="email-error" class="text-red-500 text-xs mt-1 hidden"></p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="password" placeholder="••••••••"
-                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                    <input type="password" id="password2" placeholder="••••••••"
-                           class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ateneo-light focus:border-transparent transition"/>
-                </div>
-                <button type="submit"
-                        class="w-full bg-ateneo-blue text-white py-2.5 rounded-lg font-semibold hover:bg-blue-900 transition text-sm">
-                    Create Account
-                </button>
-            </form>
-
-            <!-- Footer -->
-            <p class="text-center text-sm text-gray-500 mt-6">
-                Already have an account?
-                <a href="/login/" class="text-ateneo-light font-semibold hover:underline">Sign in</a>
+            <p class="text-center text-white/50 text-xs mt-6 md:hidden">
+                Only @student.ateneo.edu and @ateneo.edu accounts are allowed.
             </p>
         </div>
+    </div>
 
-        <p class="text-center text-white/50 text-xs mt-6">
-            Only @student.ateneo.edu and @ateneo.edu accounts are allowed.
-        </p>
+    <!-- Right Image -->
+    <div class="hidden md:flex w-1/2 relative h-screen">
+        <img src="{% static 'core/images/login_photo.jpg' %}" alt="Ateneo Campus"
+             class="object-cover w-full h-full">
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-black/30"></div>
     </div>
 </div>
 
 <script>
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const password2 = document.getElementById('password2').value;
-        const errorDiv = document.getElementById('error-message');
-        const successDiv = document.getElementById('success-message');
-        const button = e.target.querySelector('button');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
+    const errorDiv = document.getElementById('error-message');
+    const successDiv = document.getElementById('success-message');
+    const button = e.target.querySelector('button');
 
-        button.textContent = 'Creating account...';
-        button.disabled = true;
-        errorDiv.classList.add('hidden');
-        successDiv.classList.add('hidden');
+    button.textContent = 'Creating account...';
+    button.disabled = true;
+    errorDiv.classList.add('hidden');
+    successDiv.classList.add('hidden');
 
-        try {
-            const response = await fetch('/api/users/register/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify({ email, password, password2 })
-            });
+    try {
+        const response = await fetch('/api/users/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({ email, password, password2 })
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (response.ok) {
-                successDiv.textContent = 'Account created successfully! Redirecting to login...';
-                successDiv.classList.remove('hidden');
-                setTimeout(() => window.location.href = '/login/', 1500);
-            } else {
-                // Parse validation errors
-                let errorMsg = '';
-                for (const [field, messages] of Object.entries(data)) {
-                    errorMsg += `${messages}\n`;
-                }
-                errorDiv.textContent = errorMsg || 'Registration failed. Please try again.';
-                errorDiv.classList.remove('hidden');
-                button.textContent = 'Create Account';
-                button.disabled = false;
+        if (response.ok) {
+            successDiv.textContent = 'Account created successfully! Redirecting to login...';
+            successDiv.classList.remove('hidden');
+            setTimeout(() => window.location.href = '/login/', 1500);
+        } else {
+            let errorMsg = '';
+            for (const [field, messages] of Object.entries(data)) {
+                errorMsg += `${messages}\n`;
             }
-        } catch (err) {
-            errorDiv.textContent = 'Something went wrong. Please try again.';
+            errorDiv.textContent = errorMsg || 'Registration failed. Please try again.';
             errorDiv.classList.remove('hidden');
             button.textContent = 'Create Account';
             button.disabled = false;
         }
-    });
+    } catch (err) {
+        errorDiv.textContent = 'Something went wrong. Please try again.';
+        errorDiv.classList.remove('hidden');
+        button.textContent = 'Create Account';
+        button.disabled = false;
+    }
+});
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
+    return cookieValue;
+}
 </script>
+
+<style>
+/* Fade-in animation for the panel */
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(1.5rem); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s ease-out forwards;
+}
+
+/* Subtle hover lift */
+.animate-fade-in-up:hover {
+  transform: translateY(-0.25rem);
+  transition: transform 0.3s ease;
+}
+</style>
 {% endblock %}

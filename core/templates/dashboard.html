@@ -1,51 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Dashboard — One Big Hub{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 flex">
+<div class="min-h-screen flex bg-gray-50">
 
     <!-- Sidebar -->
     <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
-        <!-- Logo -->
-        <div class="px-6 py-6 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <span class="text-ateneo-blue font-bold text-sm">A</span>
-                </div>
-                <span class="text-white font-display font-bold">One Big Hub</span>
-            </div>
+        <!-- Logo / Crest -->
+        <div class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
+            <img src="{% static 'core/images/white_eagle.png' %}" class="w-10 h-10">
+            <span class="text-white font-bold text-lg">One Big Hub</span>
         </div>
 
         <!-- Nav Links -->
         <nav class="flex-1 px-4 py-6 space-y-1">
             <a href="/dashboard/"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
-                <span></span> Dashboard
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+                border-l-4
+                {% if current_page == 'dashboard' %}border-ateneo-gold text-white{% else %}border-transparent text-white{% endif %}">
+                    Dashboard
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Proposals
+
+            <a href="/proposals/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+                border-l-4
+                {% if current_page == 'proposals' %}border-ateneo-gold text-white{% else %}border-transparent text-white{% endif %}">
+                    Proposals
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Venues
+
+            <a href="/venues/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+                border-l-4
+                {% if current_page == 'venues' %}border-ateneo-gold text-white{% else %}border-transparent text-white{% endif %}">
+                    Venues
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Activity Feed
+
+            <a href="/feed/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+                border-l-4
+                {% if current_page == 'feed' %}border-ateneo-gold text-white{% else %}border-transparent text-white{% endif %}">
+                    Activity Feed
             </a>
+
             <a href="/profile/setup/"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Profile Settings
-</a>
-            
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+                border-l-4
+                {% if current_page == 'profile' %}border-ateneo-gold text-white{% else %}border-transparent text-white{% endif %}">
+                    Profile Settings
+            </a>
         </nav>
 
         <!-- Logout -->
-        <div class="px-4 py-6 border-t border-white/10">
+        <div class="px-4 py-6 border-t border-white/20">
             <button onclick="logout()"
-                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Logout
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm transition transform hover:scale-105">
+                Logout
             </button>
         </div>
     </aside>
@@ -55,19 +66,17 @@
 
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-ateneo-blue font-display">
-                Welcome back, {{ user.username }}
-            </h1>
+            <h1 class="text-3xl font-bold text-ateneo-blue">Welcome back, {{ user.username }}</h1>
             <p class="text-gray-500 text-sm mt-1">
                 {{ user.email }} ·
-                <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                <span class="inline-block {% if user.is_org %}bg-ateneo-gold text-white{% else %}bg-gray-200 text-gray-700{% endif %} text-xs px-2 py-0.5 rounded-full font-medium">
                     {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
                 </span>
             </p>
         </div>
 
         <!-- Profile Card -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div class="bg-white rounded-xl shadow p-6 mb-6 hover:shadow-lg transition">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="font-semibold text-gray-800">Your Profile</h2>
                 <span class="text-xs text-gray-400">
@@ -91,9 +100,7 @@
                     </div>
                     <div>
                         <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
-                        <p class="font-medium text-gray-800">
-                            {% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}
-                        </p>
+                        <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
                     </div>
                     <div>
                         <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
@@ -112,9 +119,7 @@
                     </div>
                     <div>
                         <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
-                        <p class="font-medium text-gray-800">
-                            {% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}
-                        </p>
+                        <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
                     </div>
                     <div>
                         <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
@@ -124,24 +129,6 @@
             {% endif %}
         </div>
 
-        <!-- Coming Soon Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
-                <p class="text-2xl mb-2"></p>
-                <h3 class="font-semibold text-gray-700 mb-1">Proposals</h3>
-                <p class="text-xs text-gray-400">Coming in Iteration 2</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
-                <p class="text-2xl mb-2"></p>
-                <h3 class="font-semibold text-gray-700 mb-1">Venue Reservations</h3>
-                <p class="text-xs text-gray-400">Coming in Iteration 3</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-60">
-                <p class="text-2xl mb-2"></p>
-                <h3 class="font-semibold text-gray-700 mb-1">Activity Feed</h3>
-                <p class="text-xs text-gray-400">Coming in Iteration 3</p>
-            </div>
-        </div>
     </main>
 </div>
 

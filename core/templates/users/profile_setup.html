@@ -1,45 +1,58 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Complete Your Profile — One Big Hub{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 flex">
+<div class="min-h-screen flex bg-gray-50">
 
-    <!-- Sidebar (same as dashboard) -->
+    <!-- Sidebar -->
     <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
-        <div class="px-6 py-6 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <span class="text-ateneo-blue font-bold text-sm">A</span>
-                </div>
-                <span class="text-white font-display font-bold">One Big Hub</span>
-            </div>
+        <!-- Logo / Crest -->
+        <div class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
+            <img src="{% static 'core/images/white_eagle.png' %}" class="w-10 h-10">
+            <span class="text-white font-bold text-lg">One Big Hub</span>
         </div>
+
+        <!-- Nav Links -->
         <nav class="flex-1 px-4 py-6 space-y-1">
             <a href="/dashboard/"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Dashboard
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+               border-l-4
+               {% if current_page == 'dashboard' %}border-ateneo-gold text-white{% else %}border-transparent text-white/70{% endif %}">
+                Dashboard
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Proposals
+            <a href="/proposals/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+               border-l-4
+               {% if current_page == 'proposals' %}border-ateneo-gold text-white{% else %}border-transparent text-white/70{% endif %}">
+                Proposals
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Venues
+            <a href="/venues/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+               border-l-4
+               {% if current_page == 'venues' %}border-ateneo-gold text-white{% else %}border-transparent text-white/70{% endif %}">
+                Venues
             </a>
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span></span> Activity Feed
+            <a href="/feed/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+               border-l-4
+               {% if current_page == 'feed' %}border-ateneo-gold text-white{% else %}border-transparent text-white/70{% endif %}">
+                Activity Feed
             </a>
             <a href="/profile/setup/"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
-                <span></span> Profile Settings
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
+               border-l-4
+               {% if current_page == 'profile' %}border-ateneo-gold text-white{% else %}border-transparent text-white/70{% endif %}">
+                Profile Settings
             </a>
         </nav>
-        <div class="px-4 py-6 border-t border-white/10">
+
+        <!-- Logout -->
+        <div class="px-4 py-6 border-t border-white/20">
             <button onclick="logout()"
-                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm transition">
-                <span>🚪</span> Logout
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm transition transform hover:scale-105">
+                Logout
             </button>
         </div>
     </aside>
@@ -145,7 +158,6 @@
                     Save Profile
                 </button>
             </form>
-
             {% else %}
             <!-- Admin Office Form -->
             <form id="profile-form" class="space-y-5">

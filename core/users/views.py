@@ -39,7 +39,7 @@ def dashboard_page(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    context = {'user': request.user}
+    context = {'user': request.user, 'current_page': 'dashboard'}  # <-- add this
 
     if request.user.is_org:
         try:
@@ -176,7 +176,10 @@ def profile_setup_page(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    context = {'user': request.user}
+    context = {
+        'user': request.user,
+        'current_page': 'profile',  # <-- highlight sidebar here
+    }
 
     if request.user.is_org:
         context['profile'] = request.user.org_profile
