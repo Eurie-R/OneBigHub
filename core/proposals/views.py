@@ -66,7 +66,7 @@ def edit_proposal(request, pk):
     # Don't allow editing if its not a draft
     if proposal.status != Proposal.Status.DRAFT:
         messages.error(request, "You can only edit draft proposals.")
-        return redirect('proposals:proposal_detail')
+        return redirect('proposals:proposal_detail', pk=proposal.pk)
 
     if request.method == 'POST':
         form = ProposalForm(request.POST, instance=proposal)
