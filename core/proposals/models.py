@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from django.core.exceptions import ValidationError
-from users.models import OrganizationProfile
+from users.models import OrganizationProfile, AdminOfficeProfile
 
 
 # ─────────────────────────────────────────────
@@ -62,6 +62,16 @@ class Proposal(models.Model):
         choices=Status.choices, 
         default=Status.DRAFT
     )
+
+    # Review fields (set by admin office when approving/rejecting)
+    reviewed_by = models.ForeignKey(
+        AdminOfficeProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_proposals'
+    )
+    review_comment = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

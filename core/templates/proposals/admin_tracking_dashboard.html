@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Status Tracking — One Big Hub{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex bg-gray-50">
+
+    <!-- Sidebar (same as dashboard) -->
+    <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
+        <div class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
+            <img src="{% static 'core/images/white_eagle.png' %}" class="w-10 h-10">
+            <span class="text-white font-bold text-lg">One Big Hub</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <a href="/dashboard/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
+               Dashboard
+            </a>
+            <a href="{% url 'proposals:proposal_list' %}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
+               Proposal Queue
+            </a>
+            <a href="{% url 'proposals:admin_tracking_dashboard' %}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-ateneo-gold text-white bg-white/10">
+               Status Tracking
+            </a>
+            <a href="{% url 'proposals:public_proposals' %}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
+               All Proposals
+            </a>
+            <a href="/profile/setup/"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
+               Profile Settings
+            </a>
+        </nav>
+        <div class="px-4 py-6 border-t border-white/20">
+            <button onclick="logout()"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm transition">
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-ateneo-blue">Proposal Status Tracking</h1>
+            <p class="text-gray-500 text-sm mt-1">
+                {{ admin_profile.office_name }} · {{ admin_profile.get_office_type_display }}
+            </p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+            <a href="?status=" class="block bg-white rounded-xl shadow p-5 text-center hover:shadow-md transition {% if not status_filter %}ring-2 ring-ateneo-blue{% endif %}">
+                <p class="text-3xl font-bold text-gray-700">{{ counts.total }}</p>
+                <p class="text-xs uppercase tracking-wide text-gray-400 mt-1">Total</p>
+            </a>
+            <a href="?status=SUBMITTED" class="block bg-blue-50 rounded-xl shadow p-5 text-center hover:shadow-md transition border border-blue-100 {% if status_filter == 'SUBMITTED' %}ring-2 ring-blue-500{% endif %}">
+                <p class="text-3xl font-bold text-blue-600">{{ counts.submitted }}</p>
+                <p class="text-xs uppercase tracking-wide text-blue-400 mt-1">Submitted</p>
+            </a>
+            <a href="?status=UNDER_REVIEW" class="block bg-yellow-50 rounded-xl shadow p-5 text-center hover:shadow-md transition border border-yellow-100 {% if status_filter == 'UNDER_REVIEW' %}ring-2 ring-yellow-500{% endif %}">
+                <p class="text-3xl font-bold text-yellow-600">{{ counts.under_review }}</p>
+                <p class="text-xs uppercase tracking-wide text-yellow-400 mt-1">Under Review</p>
+            </a>
+            <a href="?status=APPROVED" class="block bg-green-50 rounded-xl shadow p-5 text-center hover:shadow-md transition border border-green-100 {% if status_filter == 'APPROVED' %}ring-2 ring-green-500{% endif %}">
+                <p class="text-3xl font-bold text-green-600">{{ counts.approved }}</p>
+                <p class="text-xs uppercase tracking-wide text-green-400 mt-1">Approved</p>
+            </a>
+            <a href="?status=REJECTED" class="block bg-red-50 rounded-xl shadow p-5 text-center hover:shadow-md transition border border-red-100 {% if status_filter == 'REJECTED' %}ring-2 ring-red-500{% endif %}">
+                <p class="text-3xl font-bold text-red-600">{{ counts.rejected }}</p>
+                <p class="text-xs uppercase tracking-wide text-red-400 mt-1">Rejected</p>
+            </a>
+        </div>
+
+        <!-- Progress Bar -->
+        {% if counts.total > 0 %}
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-semibold text-gray-700">Pipeline Overview</h2>
+                <span class="text-xs text-gray-400">{{ counts.pending }} pending action</span>
+            </div>
+            <div class="flex h-4 rounded-full overflow-hidden gap-0.5">
+                {% if counts.submitted %}
+                <div class="bg-blue-400 transition-all" style="width: {% widthratio counts.submitted counts.total 100 %}%"
+                     title="Submitted: {{ counts.submitted }}"></div>
+                {% endif %}
+                {% if counts.under_review %}
+                <div class="bg-yellow-400 transition-all" style="width: {% widthratio counts.under_review counts.total 100 %}%"
+                     title="Under Review: {{ counts.under_review }}"></div>
+                {% endif %}
+                {% if counts.approved %}
+                <div class="bg-green-400 transition-all" style="width: {% widthratio counts.approved counts.total 100 %}%"
+                     title="Approved: {{ counts.approved }}"></div>
+                {% endif %}
+                {% if counts.rejected %}
+                <div class="bg-red-400 transition-all" style="width: {% widthratio counts.rejected counts.total 100 %}%"
+                     title="Rejected: {{ counts.rejected }}"></div>
+                {% endif %}
+            </div>
+            <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block"></span> Submitted</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span> Under Review</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-400 inline-block"></span> Approved</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span> Rejected</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Proposals Table -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-800">
+                    {% if status_filter %}
+                        {{ status_filter|title }} Proposals
+                    {% else %}
+                        All Proposals
+                    {% endif %}
+                    <span class="ml-2 text-sm font-normal text-gray-400">({{ proposals|length }})</span>
+                </h2>
+                {% if status_filter %}
+                <a href="?" class="text-xs text-gray-400 hover:text-gray-600">Clear filter ×</a>
+                {% endif %}
+            </div>
+
+            {% if proposals %}
+            <div class="divide-y divide-gray-50">
+                {% for proposal in proposals %}
+                <a href="{% url 'proposals:proposal_detail' proposal.pk %}"
+                   class="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition">
+
+                    <!-- Status indicator dot -->
+                    <span class="flex-shrink-0 w-2.5 h-2.5 rounded-full
+                        {% if proposal.status == 'APPROVED' %}bg-green-400
+                        {% elif proposal.status == 'REJECTED' %}bg-red-400
+                        {% elif proposal.status == 'UNDER_REVIEW' %}bg-yellow-400
+                        {% else %}bg-blue-400{% endif %}">
+                    </span>
+
+                    <!-- Org + Title -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                            {{ proposal.title|default:"Untitled" }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            {{ proposal.organization.org_name }}
+                        </p>
+                    </div>
+
+                    <!-- Event dates -->
+                    <div class="hidden sm:block text-xs text-gray-500 text-right w-40">
+                        {% if proposal.start_datetime %}
+                            {{ proposal.start_datetime|date:"M j, Y" }}
+                        {% else %}
+                            <span class="italic text-gray-300">No date set</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last updated -->
+                    <div class="text-xs text-gray-400 w-24 text-right">
+                        {{ proposal.updated_at|date:"M j, Y" }}
+                    </div>
+
+                    <!-- Status Badge -->
+                    <span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-28 justify-center
+                        {% if proposal.status == 'APPROVED' %}bg-green-100 text-green-800
+                        {% elif proposal.status == 'REJECTED' %}bg-red-100 text-red-800
+                        {% elif proposal.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
+                        {% elif proposal.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                        {{ proposal.get_status_display }}
+                    </span>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="px-6 py-16 text-center text-gray-400 text-sm italic">
+                No proposals match this filter.
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+</div>
+
+<script>
+    async function logout() {
+        await fetch('/api/users/logout/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        });
+        window.location.href = '/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

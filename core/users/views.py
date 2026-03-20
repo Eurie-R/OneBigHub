@@ -11,6 +11,7 @@ from .serializers import (
 )
 from .models import OrganizationProfile, AdminOfficeProfile
 from .permissions import IsProfileOwner
+from proposals.models import Proposal
 
 
 # ─────────────────────────────────────────────
@@ -39,17 +40,43 @@ def dashboard_page(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    context = {'user': request.user, 'current_page': 'dashboard'}  # <-- add this
+    context = {'user': request.user, 'current_page': 'dashboard'}
 
     if request.user.is_org:
         try:
-            context['profile'] = request.user.org_profile
+            org_profile = request.user.org_profile
+            context['profile'] = org_profile
+
+            org_qs = Proposal.objects.filter(organization=org_profile)
+            context['proposal_counts'] = {
+                'draft': org_qs.filter(status=Proposal.Status.DRAFT).count(),
+                'submitted': org_qs.filter(status=Proposal.Status.SUBMITTED).count(),
+                'under_review': org_qs.filter(status=Proposal.Status.UNDER_REVIEW).count(),
+                'approved': org_qs.filter(status=Proposal.Status.APPROVED).count(),
+                'rejected': org_qs.filter(status=Proposal.Status.REJECTED).count(),
+            }
+            context['recent_proposals'] = org_qs.order_by('-updated_at')[:5]
         except OrganizationProfile.DoesNotExist:
             context['profile'] = None
 
     elif request.user.is_admin_office:
         try:
-            context['profile'] = request.user.admin_profile
+            admin_profile = request.user.admin_profile
+            context['profile'] = admin_profile
+
+            office_qs = Proposal.objects.filter(
+                reviewing_office=admin_profile.office_type
+            ).exclude(status=Proposal.Status.DRAFT)
+            context['proposal_counts'] = {
+                'submitted': office_qs.filter(status=Proposal.Status.SUBMITTED).count(),
+                'under_review': office_qs.filter(status=Proposal.Status.UNDER_REVIEW).count(),
+                'approved': office_qs.filter(status=Proposal.Status.APPROVED).count(),
+                'rejected': office_qs.filter(status=Proposal.Status.REJECTED).count(),
+                'pending': office_qs.filter(
+                    status__in=[Proposal.Status.SUBMITTED, Proposal.Status.UNDER_REVIEW]
+                ).count(),
+            }
+            context['recent_proposals'] = office_qs.select_related('organization').order_by('-updated_at')[:5]
         except AdminOfficeProfile.DoesNotExist:
             context['profile'] = None
 
