@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %} Venues {% endblock %}
+{% block content %}
+{% for venue in venues %}
+<h1> {{ venue.name }} - Type {{ venue.venue_type }}</h1>
+<p> {{ venue.description }} </p>
+<li> Status: {{ </li>
+{% endfor %}
+{% endblock %}
