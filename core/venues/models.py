@@ -13,6 +13,7 @@ class Venue(models.Model):
     name = models.CharField(max_length=255)
     venue_type = models.CharField(max_length=1, choices = VENUE_TYPES)
     description = models.CharField(max_length=255)
+    
 
     def __str__(self):
         return self.name
@@ -25,6 +26,7 @@ class Reservation(models.Model):
     date = models.DateField()
     res_start = models.TimeField()
     res_end = models.TimeField() ##Raise error if end is before start
+
 
     
 
