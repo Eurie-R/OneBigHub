@@ -18,7 +18,7 @@ class Venue(models.Model):
     def __str__(self):
         return self.name
     
-class Reservation(models.Model):
+class ReservationView(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     reserver = models.CharField(max_length=255)
 
@@ -27,8 +27,12 @@ class Reservation(models.Model):
     res_start = models.TimeField()
     res_end = models.TimeField() ##Raise error if end is before start
 
-
-    
+class ReservationRequest(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    contact_number = models.CharField(max_length=10)
+    purpose = models.CharField(max_length=255)
+    pax = models.PositiveIntegerField()
 
 
 
