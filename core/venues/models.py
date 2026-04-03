@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class Venue(models.Model):
     ONE = "1"
@@ -18,21 +19,50 @@ class Venue(models.Model):
     def __str__(self):
         return self.name
     
-class ReservationView(models.Model):
+class ReservationModel(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     reserver = models.CharField(max_length=255)
 
-    #Time info
-    date = models.DateField()
-    res_start = models.TimeField()
-    res_end = models.TimeField() ##Raise error if end is before start
+    #Reservation Status
+    BOOK = "Book"
+    PENDING = "Pending"
+    BOOKED = "Booked"
+    REJECTED = "Rejected"
+
+    STATUSES = (
+        (BOOK, "Book"),
+        (PENDING, "Pending"),
+        (BOOKED, "Booked"),
+        (REJECTED, "Rejected")
+    )
+    status = models.CharField(max_length=8, choices=STATUSES, default=BOOK)
+
 
 class ReservationRequest(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    contact_number = models.CharField(max_length=10)
+    contact_number = models.CharField(max_length=11)
+    email_address = models.CharField(max_length=255)
     purpose = models.CharField(max_length=255)
     pax = models.PositiveIntegerField()
+
+    #Time info
+    date = models.DateField()
+    start = models.TimeField()
+    end = models.TimeField() 
+
+    def clean(self):
+        if self.end <= self.start:
+            raise ValidationError('The reservation must end after the start time.')
+        
+        conflict = ReservationModel.objects.filter(
+            venue = self.venue,
+            date = self.date,
+            start__lt = self.end,   #Existing start time falls before new end time
+            end__gt = self.start    #Existing end time falls after new start time
+        )
+        if conflict.exists():
+            raise ValidationError('Sorry, there is a conflicting reservation. Please choose a different time or venue.')
 
 
 
