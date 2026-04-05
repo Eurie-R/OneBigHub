@@ -21,7 +21,11 @@ class Venue(models.Model):
     
 class ReservationModel(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-    reserver = models.CharField(max_length=255)
+
+    #Time info
+    date = models.DateField()
+    start = models.TimeField()
+    end = models.TimeField() 
 
     #Reservation Status
     BOOK = "Book"
@@ -37,8 +41,12 @@ class ReservationModel(models.Model):
     )
     status = models.CharField(max_length=8, choices=STATUSES, default=BOOK)
 
+    def __str__(self):
+        return f"{self.venue} booked on {self.date} from {self.start} - {self.end}"
+
 
 class ReservationRequest(models.Model):
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=11)
@@ -63,6 +71,9 @@ class ReservationRequest(models.Model):
         )
         if conflict.exists():
             raise ValidationError('Sorry, there is a conflicting reservation. Please choose a different time or venue.')
+    
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.contact_number}) - {self.venue} for {self.pax} people"
 
 
 
