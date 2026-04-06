@@ -18,7 +18,7 @@ def create_proposal(request):
         return redirect('users:dashboard')
 
     if request.method == 'POST':
-        form = ProposalForm(request.POST)
+        form = ProposalForm(request.POST, request.FILES)
         action = request.POST.get('action') # Either draft or submit
 
         if form.is_valid():
@@ -32,7 +32,10 @@ def create_proposal(request):
             if action == 'submit':
                 if not uploaded_files:
                     messages.error(request, "You must upload at least one supporting document to submit.")
-                    return render(request, 'proposals/create_proposal.html', {'form': form})
+                    return render(request, 'proposals/create_proposal.html', {
+                        'form': form,
+                        'current_page': 'proposals'
+                    })
                 
                 proposal.status = Proposal.Status.SUBMITTED
                 messages.success(request, "Proposal submitted successfully for review!")
@@ -51,7 +54,10 @@ def create_proposal(request):
     else:
         form = ProposalForm()
 
-    return render(request, 'proposals/create_proposal.html', {'form': form})
+    return render(request, 'proposals/create_proposal.html', {
+        'form': form,
+        'current_page': 'proposals'
+    })
 
 
 @login_required
@@ -72,7 +78,7 @@ def edit_proposal(request, pk):
         return redirect('proposals:proposal_detail', pk=proposal.pk)
 
     if request.method == 'POST':
-        form = ProposalForm(request.POST, instance=proposal)
+        form = ProposalForm(request.POST, request.FILES, instance=proposal)
         action = request.POST.get('action')
 
         if form.is_valid():
@@ -88,7 +94,11 @@ def edit_proposal(request, pk):
                 
                 if not new_files and not has_existing_files:
                     messages.error(request, "You must upload at least one supporting document to submit.")
-                    return render(request, 'proposals/create_proposal.html', {'form': form, 'edit_mode': True})
+                    return render(request, 'proposals/create_proposal.html', {
+                        'form': form,
+                        'edit_mode': True,
+                        'current_page': 'proposals'
+                    })
 
                 proposal.status = Proposal.Status.SUBMITTED
                 messages.success(request, "Proposal submitted successfully for review!")
@@ -107,13 +117,21 @@ def edit_proposal(request, pk):
         # Load the draft data
         form = ProposalForm(instance=proposal)
 
-    return render(request, 'proposals/create_proposal.html', {'form': form, 'edit_mode': True})
+    return render(request, 'proposals/create_proposal.html', {
+        'form': form,
+        'edit_mode': True,
+        'current_page': 'proposals'
+    })
 
 @login_required
 def proposal_detail(request, pk):
     proposal = get_object_or_404(Proposal, pk=pk)
     attachments = Attachment.objects.filter(proposal=proposal)
-    return render(request, 'proposals/proposal_detail.html', {'proposal': proposal, 'attachments': attachments})
+    return render(request, 'proposals/proposal_detail.html', {
+        'proposal': proposal,
+        'attachments': attachments,
+        'current_page': 'proposals'
+    })
 
 
 @login_required
@@ -139,7 +157,10 @@ def proposal_list(request):
         messages.error(request, "Access denied.")
         return redirect('users:dashboard')
 
-    return render(request, 'proposals/proposal_list.html', {'proposals': proposals})
+    return render(request, 'proposals/proposal_list.html', {
+        'proposals': proposals,
+        'current_page': 'proposals',
+    })
 
 
 @login_required

@@ -1,288 +1,240 @@
-{% extends 'base.html' %}
+{% extends 'sidebar.html' %}
 {% load static %}
 
 {% block title %}Dashboard — One Big Hub{% endblock %}
 
-{% block content %}
-<div class="min-h-screen flex bg-gray-50">
+{% block app_content %}
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
-        <div class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
-            <img src="{% static 'core/images/white_eagle.png' %}" class="w-10 h-10">
-            <span class="text-white font-bold text-lg">One Big Hub</span>
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-ateneo-blue">Welcome back, {{ user.username }}</h1>
+        <p class="text-gray-500 text-sm mt-1">
+            {{ user.email }} ·
+            <span class="inline-block {% if user.is_org %}bg-ateneo-gold text-white{% else %}bg-ateneo-blue text-white{% endif %} text-xs px-2 py-0.5 rounded-full font-medium">
+                {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
+            </span>
+        </p>
+    </div>
+
+    <!-- ── ORG USER DASHBOARD ── -->
+    {% if user.is_org %}
+
+    <!-- Proposal Status Summary Cards -->
+    {% if proposal_counts %}
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6" id="status-cards">
+        <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-2xl font-bold text-gray-600" id="count-draft">{{ proposal_counts.draft }}</p>
+            <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Draft</p>
         </div>
-
-        <nav class="flex-1 px-4 py-6 space-y-1">
-            <a href="/dashboard/"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'dashboard' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                Dashboard
-            </a>
-            <a href="{% url 'proposals:proposal_list' %}"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'proposals' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                {% if user.is_admin_office %}Proposal Queue{% else %}My Proposals{% endif %}
-            </a>
-            {% if user.is_admin_office %}
-            <a href="{% url 'proposals:admin_tracking_dashboard' %}"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'tracking' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                Status Tracking
-            </a>
-            {% endif %}
-            <a href="{% url 'proposals:public_proposals' %}"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'public' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                All Proposals
-            </a>
-            <a href="/venues/"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
-                Venues
-            </a>
-            <a href="/profile/setup/"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'profile' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                Profile Settings
-            </a>
-        </nav>
-
-        <div class="px-4 py-6 border-t border-white/20">
-            <button onclick="logout()"
-                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm transition">
-                Logout
-            </button>
+        <div class="bg-blue-50 rounded-xl shadow p-4 text-center border border-blue-100">
+            <p class="text-2xl font-bold text-blue-600" id="count-submitted">{{ proposal_counts.submitted }}</p>
+            <p class="text-xs text-blue-400 uppercase tracking-wide mt-1">Submitted</p>
         </div>
-    </aside>
+        <div class="bg-yellow-50 rounded-xl shadow p-4 text-center border border-yellow-100">
+            <p class="text-2xl font-bold text-yellow-600" id="count-under-review">{{ proposal_counts.under_review }}</p>
+            <p class="text-xs text-yellow-400 uppercase tracking-wide mt-1">Under Review</p>
+        </div>
+        <div class="bg-green-50 rounded-xl shadow p-4 text-center border border-green-100">
+            <p class="text-2xl font-bold text-green-600" id="count-approved">{{ proposal_counts.approved }}</p>
+            <p class="text-xs text-green-400 uppercase tracking-wide mt-1">Approved</p>
+        </div>
+        <div class="bg-red-50 rounded-xl shadow p-4 text-center border border-red-100">
+            <p class="text-2xl font-bold text-red-600" id="count-rejected">{{ proposal_counts.rejected }}</p>
+            <p class="text-xs text-red-400 uppercase tracking-wide mt-1">Rejected</p>
+        </div>
+    </div>
+    {% endif %}
 
-    <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-y-auto">
-
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-ateneo-blue">Welcome back, {{ user.username }}</h1>
-            <p class="text-gray-500 text-sm mt-1">
-                {{ user.email }} ·
-                <span class="inline-block {% if user.is_org %}bg-ateneo-gold text-white{% else %}bg-ateneo-blue text-white{% endif %} text-xs px-2 py-0.5 rounded-full font-medium">
-                    {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
+    <!-- Recent Proposals with live status -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800">Recent Proposals</h2>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-gray-400" id="last-updated">
+                    Live · updates every 30s
                 </span>
-            </p>
-        </div>
-
-        <!-- ── ORG USER DASHBOARD ── -->
-        {% if user.is_org %}
-
-        <!-- Proposal Status Summary Cards -->
-        {% if proposal_counts %}
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6" id="status-cards">
-            <div class="bg-white rounded-xl shadow p-4 text-center">
-                <p class="text-2xl font-bold text-gray-600" id="count-draft">{{ proposal_counts.draft }}</p>
-                <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Draft</p>
-            </div>
-            <div class="bg-blue-50 rounded-xl shadow p-4 text-center border border-blue-100">
-                <p class="text-2xl font-bold text-blue-600" id="count-submitted">{{ proposal_counts.submitted }}</p>
-                <p class="text-xs text-blue-400 uppercase tracking-wide mt-1">Submitted</p>
-            </div>
-            <div class="bg-yellow-50 rounded-xl shadow p-4 text-center border border-yellow-100">
-                <p class="text-2xl font-bold text-yellow-600" id="count-under-review">{{ proposal_counts.under_review }}</p>
-                <p class="text-xs text-yellow-400 uppercase tracking-wide mt-1">Under Review</p>
-            </div>
-            <div class="bg-green-50 rounded-xl shadow p-4 text-center border border-green-100">
-                <p class="text-2xl font-bold text-green-600" id="count-approved">{{ proposal_counts.approved }}</p>
-                <p class="text-xs text-green-400 uppercase tracking-wide mt-1">Approved</p>
-            </div>
-            <div class="bg-red-50 rounded-xl shadow p-4 text-center border border-red-100">
-                <p class="text-2xl font-bold text-red-600" id="count-rejected">{{ proposal_counts.rejected }}</p>
-                <p class="text-xs text-red-400 uppercase tracking-wide mt-1">Rejected</p>
+                <a href="{% url 'proposals:proposal_list' %}" class="text-xs text-blue-600 hover:underline">View all</a>
             </div>
         </div>
-        {% endif %}
 
-        <!-- Recent Proposals with live status -->
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-gray-800">Recent Proposals</h2>
-                <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-400" id="last-updated">
-                        Live · updates every 30s
-                    </span>
-                    <a href="{% url 'proposals:proposal_list' %}" class="text-xs text-blue-600 hover:underline">View all</a>
+        {% if recent_proposals %}
+        <div id="proposal-rows" class="space-y-2">
+            {% for p in recent_proposals %}
+            <a href="{% url 'proposals:proposal_detail' p.pk %}"
+                class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition"
+                data-proposal-id="{{ p.pk }}">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800 truncate">{{ p.title|default:"Untitled Draft" }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ p.reviewing_office|default:"—" }} · {{ p.updated_at|date:"M j, Y" }}</p>
                 </div>
-            </div>
-
-            {% if recent_proposals %}
-            <div id="proposal-rows" class="space-y-2">
-                {% for p in recent_proposals %}
-                <a href="{% url 'proposals:proposal_detail' p.pk %}"
-                   class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition"
-                   data-proposal-id="{{ p.pk }}">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ p.title|default:"Untitled Draft" }}</p>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ p.reviewing_office|default:"—" }} · {{ p.updated_at|date:"M j, Y" }}</p>
-                    </div>
-                    <span class="ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold proposal-status-badge
-                        {% if p.status == 'APPROVED' %}bg-green-100 text-green-800
-                        {% elif p.status == 'REJECTED' %}bg-red-100 text-red-800
-                        {% elif p.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
-                        {% elif p.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
-                        {% else %}bg-gray-100 text-gray-600{% endif %}">
-                        {{ p.get_status_display }}
-                    </span>
-                </a>
-                {% endfor %}
-            </div>
-            {% else %}
-            <p class="text-sm text-gray-400 italic">No proposals yet.
-                <a href="{% url 'proposals:create_proposal' %}" class="text-blue-600 hover:underline">Create your first one.</a>
-            </p>
-            {% endif %}
-        </div>
-
-        <!-- Profile Card -->
-        <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-gray-800">Your Profile</h2>
-                <span class="text-xs text-gray-400">
-                    {% if profile and profile.org_name %}Complete{% else %}Incomplete{% endif %}
+                <span class="ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold proposal-status-badge
+                    {% if p.status == 'APPROVED' %}bg-green-100 text-green-800
+                    {% elif p.status == 'REJECTED' %}bg-red-100 text-red-800
+                    {% elif p.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
+                    {% elif p.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ p.get_status_display }}
                 </span>
-            </div>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Organization</p>
-                    <p class="font-medium text-gray-800">{{ profile.org_name|default:"Not set" }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Moderator</p>
-                    <p class="font-medium text-gray-800">{{ profile.moderator_name|default:"Not set" }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
-                    <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
-                    <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
-                </div>
-            </div>
+            </a>
+            {% endfor %}
         </div>
-
-        <!-- ── ADMIN OFFICE DASHBOARD ── -->
         {% else %}
-
-        <!-- Admin Proposal Stats Cards -->
-        {% if proposal_counts %}
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div class="bg-orange-50 rounded-xl shadow p-4 text-center border border-orange-100">
-                <p class="text-2xl font-bold text-orange-600">{{ proposal_counts.pending }}</p>
-                <p class="text-xs text-orange-400 uppercase tracking-wide mt-1">Needs Action</p>
-            </div>
-            <div class="bg-yellow-50 rounded-xl shadow p-4 text-center border border-yellow-100">
-                <p class="text-2xl font-bold text-yellow-600">{{ proposal_counts.under_review }}</p>
-                <p class="text-xs text-yellow-400 uppercase tracking-wide mt-1">Under Review</p>
-            </div>
-            <div class="bg-green-50 rounded-xl shadow p-4 text-center border border-green-100">
-                <p class="text-2xl font-bold text-green-600">{{ proposal_counts.approved }}</p>
-                <p class="text-xs text-green-400 uppercase tracking-wide mt-1">Approved</p>
-            </div>
-            <div class="bg-red-50 rounded-xl shadow p-4 text-center border border-red-100">
-                <p class="text-2xl font-bold text-red-600">{{ proposal_counts.rejected }}</p>
-                <p class="text-xs text-red-400 uppercase tracking-wide mt-1">Rejected</p>
-            </div>
-        </div>
+        <p class="text-sm text-gray-400 italic">No proposals yet.
+            <a href="{% url 'proposals:create_proposal' %}" class="text-blue-600 hover:underline">Create your first one.</a>
+        </p>
         {% endif %}
+    </div>
 
-        <!-- Recent Proposals for Admin -->
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-gray-800">Recently Updated Proposals</h2>
-                <div class="flex gap-3">
-                    <a href="{% url 'proposals:admin_tracking_dashboard' %}" class="text-xs text-blue-600 hover:underline">Full tracking view</a>
-                    <a href="{% url 'proposals:proposal_list' %}" class="text-xs text-blue-600 hover:underline">Queue</a>
-                </div>
+    <!-- Profile Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800">Your Profile</h2>
+            <span class="text-xs text-gray-400">
+                {% if profile and profile.org_name %}Complete{% else %}Incomplete{% endif %}
+            </span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Organization</p>
+                <p class="font-medium text-gray-800">{{ profile.org_name|default:"Not set" }}</p>
             </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Moderator</p>
+                <p class="font-medium text-gray-800">{{ profile.moderator_name|default:"Not set" }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
+                <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
+                <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
+            </div>
+        </div>
+    </div>
 
-            {% if recent_proposals %}
-            <div class="space-y-2">
-                {% for p in recent_proposals %}
-                <a href="{% url 'proposals:proposal_detail' p.pk %}"
-                   class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ p.title|default:"Untitled" }}</p>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ p.organization.org_name }} · {{ p.updated_at|date:"M j, Y" }}</p>
-                    </div>
-                    <span class="ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-                        {% if p.status == 'APPROVED' %}bg-green-100 text-green-800
-                        {% elif p.status == 'REJECTED' %}bg-red-100 text-red-800
-                        {% elif p.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
-                        {% elif p.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
-                        {% else %}bg-gray-100 text-gray-600{% endif %}">
-                        {{ p.get_status_display }}
-                    </span>
-                </a>
-                {% endfor %}
+    <!-- ── ADMIN OFFICE DASHBOARD ── -->
+    {% else %}
+
+    <!-- Admin Proposal Stats Cards -->
+    {% if proposal_counts %}
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="bg-orange-50 rounded-xl shadow p-4 text-center border border-orange-100">
+            <p class="text-2xl font-bold text-orange-600">{{ proposal_counts.pending }}</p>
+            <p class="text-xs text-orange-400 uppercase tracking-wide mt-1">Needs Action</p>
+        </div>
+        <div class="bg-yellow-50 rounded-xl shadow p-4 text-center border border-yellow-100">
+            <p class="text-2xl font-bold text-yellow-600">{{ proposal_counts.under_review }}</p>
+            <p class="text-xs text-yellow-400 uppercase tracking-wide mt-1">Under Review</p>
+        </div>
+        <div class="bg-green-50 rounded-xl shadow p-4 text-center border border-green-100">
+            <p class="text-2xl font-bold text-green-600">{{ proposal_counts.approved }}</p>
+            <p class="text-xs text-green-400 uppercase tracking-wide mt-1">Approved</p>
+        </div>
+        <div class="bg-red-50 rounded-xl shadow p-4 text-center border border-red-100">
+            <p class="text-2xl font-bold text-red-600">{{ proposal_counts.rejected }}</p>
+            <p class="text-xs text-red-400 uppercase tracking-wide mt-1">Rejected</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Proposals for Admin -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800">Recently Updated Proposals</h2>
+            <div class="flex gap-3">
+                <a href="{% url 'proposals:admin_tracking_dashboard' %}" class="text-xs text-blue-600 hover:underline">Full tracking view</a>
+                <a href="{% url 'proposals:proposal_list' %}" class="text-xs text-blue-600 hover:underline">Queue</a>
             </div>
-            {% else %}
-            <p class="text-sm text-gray-400 italic">No proposals submitted to your office yet.</p>
-            {% endif %}
         </div>
 
-        <!-- Admin Profile Card -->
-        <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-gray-800">Your Office Profile</h2>
-                <span class="text-xs text-gray-400">
-                    {% if profile and profile.office_name %}Complete{% else %}Incomplete{% endif %}
+        {% if recent_proposals %}
+        <div class="space-y-2">
+            {% for p in recent_proposals %}
+            <a href="{% url 'proposals:proposal_detail' p.pk %}"
+                class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800 truncate">{{ p.title|default:"Untitled" }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ p.organization.org_name }} · {{ p.updated_at|date:"M j, Y" }}</p>
+                </div>
+                <span class="ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                    {% if p.status == 'APPROVED' %}bg-green-100 text-green-800
+                    {% elif p.status == 'REJECTED' %}bg-red-100 text-red-800
+                    {% elif p.status == 'SUBMITTED' %}bg-blue-100 text-blue-800
+                    {% elif p.status == 'UNDER_REVIEW' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ p.get_status_display }}
                 </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-400 italic">No proposals submitted to your office yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Admin Profile Card -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800">Your Office Profile</h2>
+            <span class="text-xs text-gray-400">
+                {% if profile and profile.office_name %}Complete{% else %}Incomplete{% endif %}
+            </span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office</p>
+                <p class="font-medium text-gray-800">{{ profile.office_name|default:"Not set" }}</p>
             </div>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office</p>
-                    <p class="font-medium text-gray-800">{{ profile.office_name|default:"Not set" }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office Type</p>
-                    <p class="font-medium text-gray-800">{{ profile.get_office_type_display|default:"Not set" }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
-                    <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
-                    <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
-                </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Office Type</p>
+                <p class="font-medium text-gray-800">{{ profile.get_office_type_display|default:"Not set" }}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Location</p>
+                <p class="font-medium text-gray-800">{% if profile.building %}{{ profile.building }}, Room {{ profile.room_number }}{% else %}Not set{% endif %}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Contact Email</p>
+                <p class="font-medium text-gray-800">{{ profile.contact_email|default:"Not set" }}</p>
             </div>
         </div>
+    </div>
 
-        {% endif %}
-    </main>
-</div>
+    {% endif %}
+{% endblock %}
 
 <script>
-    async function logout() {
-        await fetch('/api/users/logout/', {
-            method: 'POST',
-            headers: { 'X-CSRFToken': getCookie('csrftoken') }
-        });
-        window.location.href = '/';
-    }
+async function logout() {
+    await fetch('/api/users/logout/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    });
+    window.location.href = '/';
+}
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
+    return cookieValue;
+}
 
-    {% if user.is_org %}
+// ---- Read org boolean from HTML ----
+const dashboardEl = document.getElementById('dashboard');
+const USER_IS_ORG = dashboardEl.dataset.userIsOrg === 'true';
+
+// ---- Only run this for org users ----
+if (USER_IS_ORG) {
+
     const STATUS_CLASSES = {
         'DRAFT':        'bg-gray-100 text-gray-600',
         'SUBMITTED':    'bg-blue-100 text-blue-800',
@@ -304,23 +256,23 @@
             document.getElementById('count-approved').textContent      = data.counts.approved;
             document.getElementById('count-rejected').textContent      = data.counts.rejected;
 
-            // Update status badges in the recent proposals list
+            // Update status badges
             data.proposals.forEach(p => {
                 const row = document.querySelector(`[data-proposal-id="${p.id}"] .proposal-status-badge`);
                 if (row) {
                     row.textContent = p.status_display;
-                    row.className = 'ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold proposal-status-badge ' + (STATUS_CLASSES[p.status] || 'bg-gray-100 text-gray-600');
+                    row.className = 'ml-4 flex-shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold proposal-status-badge ' 
+                                     + (STATUS_CLASSES[p.status] || 'bg-gray-100 text-gray-600');
                 }
             });
 
             document.getElementById('last-updated').textContent = 'Updated ' + data.timestamp;
         } catch (e) {
-            // Silently fail — page data is still fresh from initial load
+            // Fail silently
         }
     }
 
     // Poll every 30 seconds
     setInterval(pollProposalStatus, 30000);
-    {% endif %}
+}
 </script>
-{% endblock %}

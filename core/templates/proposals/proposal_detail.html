@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
 {% block title %}Proposal – {{ proposal.title|default:"Untitled Draft" }}{% endblock %}
 
-{% block content %}
+{% block app_content %}
 <div class="max-w-3xl mx-auto px-4 py-8">
 
   <!-- Header -->
@@ -185,7 +185,7 @@
     {% endif %}
     <a href="{% url 'proposals:proposal_list' %}"
        class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
-      Back to Proposals
+      Back to My Proposals
     </a>
   </div>
 
