@@ -89,6 +89,9 @@
 </div>
 
 <script>
+const urlParams = new URLSearchParams(window.location.search);
+const nextUrl = urlParams.get('next') || '/';  // fallback to landing page
+
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -119,7 +122,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
         if (response.ok) {
             successDiv.textContent = 'Account created successfully! Redirecting to login...';
             successDiv.classList.remove('hidden');
-            setTimeout(() => window.location.href = '/login/', 1500);
+            setTimeout(() => window.location.href = `/login/?next=${encodeURIComponent(nextUrl)}`, 1500);
         } else {
             let errorMsg = '';
             for (const [field, messages] of Object.entries(data)) {

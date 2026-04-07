@@ -19,21 +19,48 @@ from proposals.models import Proposal
 # ─────────────────────────────────────────────
 
 def landing_page(request):
-    if request.user.is_authenticated:
-        return redirect('/dashboard/')
     return render(request, 'landing.html')
 
 
 def login_page(request):
     if request.user.is_authenticated:
-        return redirect('/dashboard/')
-    return render(request, 'users/login.html')
+        # Already logged in users stay on landing page
+        return redirect('users:landing')
+
+    # Check if ?next=... was passed (e.g. from header buttons in landing page)
+    next_url = request.GET.get('next')
+    
+    if request.method == "POST":
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user:
+            login(request, user)
+            # If next_url exists go there, else go to landing
+            return redirect(next_url or 'users:landing')
+        else:
+            error = "Invalid email or password"
+            return render(request, 'users/login.html', {'error': error, 'next': next_url})
+
+    # GET request - just render login form
+    return render(request, 'users/login.html', {'next': next_url})
 
 
 def register_page(request):
-    if request.user.is_authenticated:
-        return redirect('/dashboard/')
-    return render(request, 'users/register.html')
+    next_url = request.GET.get('next') or request.POST.get('next')
+
+    if request.method == "POST":
+        # handle user creation
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # log them in immediately
+            return redirect(next_url or 'users:landing')  # redirect to next or landing
+        else:
+            return render(request, 'users/register.html', {'form': form, 'next': next_url})
+
+    # GET request - show registration form
+    return render(request, 'users/register.html', {'next': next_url})
 
 
 def dashboard_page(request):
@@ -128,7 +155,7 @@ class LogoutView(APIView):
 
     def post(self, request):
         logout(request)
-        return Response({"message": "Logged out successfully."})
+        return redirect('users:landing')
 
 
 class CurrentUserView(APIView):

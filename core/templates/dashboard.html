@@ -10,7 +10,7 @@
         <h1 class="text-3xl font-bold text-ateneo-blue">Welcome back, {{ user.username }}</h1>
         <p class="text-gray-500 text-sm mt-1">
             {{ user.email }} ·
-            <span class="inline-block {% if user.is_org %}bg-ateneo-gold text-white{% else %}bg-ateneo-blue text-white{% endif %} text-xs px-2 py-0.5 rounded-full font-medium">
+            <span class="inline-block bg-ateneo-gold text-white text-xs px-2 py-0.5 rounded-full font-medium">
                 {% if user.is_org %}Student Organization{% else %}Administrative Office{% endif %}
             </span>
         </p>
