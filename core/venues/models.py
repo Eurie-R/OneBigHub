@@ -63,7 +63,7 @@ class ReservationRequest(models.Model):
         if self.end <= self.start:
             raise ValidationError('The reservation must end after the start time.')
         
-        conflict = ReservationModel.objects.filter(
+        conflict = ReservationRequest.objects.filter(
             venue = self.venue,
             date = self.date,
             start__lt = self.end,   #Existing start time falls before new end time
@@ -71,6 +71,7 @@ class ReservationRequest(models.Model):
         )
         if conflict.exists():
             raise ValidationError('Sorry, there is a conflicting reservation. Please choose a different time or venue.')
+        
     
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.contact_number}) - {self.venue} for {self.pax} people"

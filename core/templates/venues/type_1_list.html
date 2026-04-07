@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h> Type 1 Venues </h>
+{% for venue in type_one_venues %}
+<li> {{ venue.name }} - Type 1 Venue</li>
+<p> {{ venue.description }} </p>
+<a href = "{% url 'venues:avail_calendar' venue.id %}">Check Availability</a>
+<a href = "{% url 'venues:reservation_request' venue.id %}">Book</a>
+{% endfor %}
+
+{% endblock %}

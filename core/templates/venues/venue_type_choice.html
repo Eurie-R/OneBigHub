@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h> Choose Venue Type </h>
+<a href = "{% url 'venues:type_1_list' %}">Type 1 Venue</a>
+<a href = "{% url 'venues:type_2_list' %}">Type 2 Venue (Requires Approved PPF) </a>
+{% endblock %}
