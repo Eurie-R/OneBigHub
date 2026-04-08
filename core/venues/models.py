@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from datetime import date
 
 class Venue(models.Model):
     ONE = "1"
@@ -17,18 +19,76 @@ class Venue(models.Model):
 
     def __str__(self):
         return self.name
-    
-class Reservation(models.Model):
+
+class ReservationModel(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-    reserver = models.CharField(max_length=255)
+
+    date = models.DateField()
+    start = models.TimeField()
+    end = models.TimeField()
+
+    BOOK = "Book"
+    PENDING = "Pending"
+    BOOKED = "Booked"
+    REJECTED = "Rejected"
+
+    STATUSES = (
+        (BOOK, "Book"),
+        (PENDING, "Pending"),
+        (BOOKED, "Booked"),
+        (REJECTED, "Rejected")
+    )
+    status = models.CharField(max_length=8, choices=STATUSES, default=PENDING)
+
+    def __str__(self):
+        return f"{self.venue} booked on {self.date} from {self.start} - {self.end}"
+
+
+class ReservationRequest(models.Model):
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    contact_number = models.CharField(max_length=11)
+    email_address = models.CharField(max_length=255)
+    purpose = models.CharField(max_length=255)
+    pax = models.PositiveIntegerField()
 
     #Time info
     date = models.DateField()
-    res_start = models.TimeField()
-    res_end = models.TimeField() ##Raise error if end is before start
+    start = models.TimeField()
+    end = models.TimeField()
 
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
 
+    STATUSES = (
+        (APPROVED, "APPROVED"),
+        (PENDING, "Pending"),
+        (REJECTED, "Rejected")
+    )
+    status = models.CharField(max_length=8, choices=STATUSES, default=PENDING)
+
+    def clean(self):
+        if self.end <= self.start:
+            raise ValidationError('The reservation must end after the start time.')
+        
+        if self.date < date.today():
+            raise ValidationError('You cannot make a reservation before today.')
+        
+        conflict = ReservationModel.objects.filter(
+            venue = self.venue,
+            date = self.date,
+            start__lt = self.end,   #Existing start time falls before new end time
+            end__gt = self.start,   #Existing end time falls after new start time
+            status = ReservationModel.BOOKED
+        )
+        if conflict.exists():
+            raise ValidationError('Sorry, there is a conflicting reservation. Please choose a different time or venue.')
+        
     
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.contact_number}) - {self.venue} for {self.pax} people"
 
 
 

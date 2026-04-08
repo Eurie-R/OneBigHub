@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h> Choose Venue Type </h>
+<a href = "{% url 'venues:type_1_list' %}">Type 1 Venue</a>
+<a href = "{% url 'venues:type_2_list' %}">Type 2 Venue (Requires Approved PPF) </a>
+<a href = "{% url 'venues:review_reservations' %}">Review Reservations (Admin Office Users Only) </a>
+<a href = "{% url 'venues:my_reservations' %}">Check My Reservations </a>
+{% for message in messages %}
+    {{ message }}
+{% endfor %}
+{% endblock %}

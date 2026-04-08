@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Availability Calendar</h1>
+{% if reservations %}
+    {% for reservation in reservations %}
+    <li> {{ reservation.date }} from {{ reservation.start }} - {{ reservation.end }} </li>
+    {% endfor %}
+{% else %}
+    <li>No one has booked this venue yet, all time slots are available.</li>
+{% endif %}
+
+<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+
+{% endblock %}
+
+
+
+
+

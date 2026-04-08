@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Make Reservation for {{ venue.name }} </h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Reservation Request</button>
+</form>
+<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+{% endblock %}
