@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from datetime import date
 
 class Venue(models.Model):
     ONE = "1"
@@ -18,16 +19,14 @@ class Venue(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class ReservationModel(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
 
-    #Time info
     date = models.DateField()
     start = models.TimeField()
     end = models.TimeField()
 
-        #Reservation Status
     BOOK = "Book"
     PENDING = "Pending"
     BOOKED = "Booked"
@@ -59,9 +58,23 @@ class ReservationRequest(models.Model):
     start = models.TimeField()
     end = models.TimeField()
 
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+
+    STATUSES = (
+        (APPROVED, "APPROVED"),
+        (PENDING, "Pending"),
+        (REJECTED, "Rejected")
+    )
+    status = models.CharField(max_length=8, choices=STATUSES, default=PENDING)
+
     def clean(self):
         if self.end <= self.start:
             raise ValidationError('The reservation must end after the start time.')
+        
+        if self.date < date.today():
+            raise ValidationError('You cannot make a reservation before today.')
         
         conflict = ReservationModel.objects.filter(
             venue = self.venue,

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>My Reservations</h1>
+{% if reservations %}
+    {% for res in reservations %}
+    <li> {{ res.venue }} - on {{ res.date }} from {{ res.start }} - {{ res.end }}</li>
+    Status: {{ res.status }}</li>
+    {% endfor %}
+{% else %}
+    <li>You haven't made any reservations.</li>
+{% endif %}
+<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+{% endblock %}

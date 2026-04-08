@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Reservation, Venue
+from .models import ReservationModel, Venue, ReservationRequest
 
 class VenueTestCase(TestCase):
     def setUp(self):
@@ -18,3 +18,16 @@ class VenueTestCase(TestCase):
     def test_name_limit(self):
         self.assertLess(len(self.venue1.name), 256)
         self.assertLess(len(self.venue2.name), 256)
+
+class ReservationModel(TestCase):
+    def setUp(self):
+        self.venue = Venue.objects.create(name="Colayco Pavillion", venue_type="1", description="Colayco Pavillion is a roofed but semi-outdoor venue with a capacity of 50.")
+
+    def test_default_pending(self):
+        reservation = ReservationModel.objects.create(
+            venue = self.venue,
+            date = "2026-04-18",
+            start = "10:00",
+            end = "11:00"
+        )
+        self.assertEqual(reservation.status, ReservationModel.PENDING)

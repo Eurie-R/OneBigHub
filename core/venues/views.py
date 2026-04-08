@@ -3,7 +3,7 @@ from .models import Venue, ReservationModel, ReservationRequest
 from django.contrib.auth.decorators import login_required
 from .forms import ReservationRequestForm
 from proposals.models import Proposal
-from users.models import AdminOfficeProfile
+from users.models import AdminOfficeProfile, User
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 
@@ -16,9 +16,12 @@ def type_1_list(request):
     type_one_venues = Venue.objects.filter(venue_type = "1")
     return render(request, 'venues/type_1_list.html', { "type_one_venues": type_one_venues })
 
+
 @login_required
 def type_2_list(request):
     type_two_venues = Venue.objects.filter(venue_type = "2")
+
+    #Only users with an approved PPF can access
     if has_approved_ppf(request):
         return render(request, 'venues/type_2_list.html', { "type_two_venues": type_two_venues })
     else:
@@ -78,6 +81,7 @@ def review_reservations(request):
                 end = res_request.end,
                 status = ReservationModel.BOOKED
             )
+            res_request.status = 'Approved'
             messages.success(request, "Reservation Approved!")
         elif action == 'reject':
             ReservationModel.objects.create(
@@ -87,16 +91,51 @@ def review_reservations(request):
                 end = res_request.end,
                 status = ReservationModel.REJECTED
             )
+            res_request.status = 'Rejected'
             messages.success(request, "Reservation Rejected.")
-        res_request.delete()
+        res_request.save()
         
         return redirect('venues:review_reservations')
 
-    pending_reservations = ReservationRequest.objects.all()
+    pending_reservations = ReservationRequest.objects.filter(status='Pending')
     return render(request, 'venues/review_reservations.html', {"reservations": pending_reservations})
 
 @login_required
-def public_reservations(request):
-    approved = ReservationModel.objects.filter(status=ReservationModel.BOOKED)
-    pending = ReservationRequest.objects.all()
-    return render(request, 'venues/public_reservations.html', {"approved": approved, "pending": pending})
+def my_reservations(request):
+    my_res = ReservationRequest.objects.filter(email_address=request.user.email)
+    filtered_res = []
+
+    #Filters and checks for reservations models under each status type
+    for res in my_res:
+        approved = ReservationModel.objects.filter(
+            venue = res.venue,
+            date = res.date,
+            start = res.start,
+            end = res.end,
+            status = ReservationModel.BOOKED
+        ).exists()
+        
+        rejected = ReservationModel.objects.filter(
+            venue = res.venue,
+            date = res.date,
+            start = res.start,
+            end = res.end,
+            status = ReservationModel.REJECTED
+        ).exists()
+
+        if approved:
+            status = "Approved!"
+        elif rejected:
+            status = "Rejected!"
+        else:
+            status = "Pending."
+    
+        filtered_res.append({
+            'venue': res.venue.name,
+            'date': res.date,
+            'start': res.start,
+            'end': res.end,
+            'status': status
+        })
+
+    return render(request, 'venues/my_reservations.html', {"reservations": filtered_res})
