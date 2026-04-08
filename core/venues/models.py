@@ -25,9 +25,9 @@ class ReservationModel(models.Model):
     #Time info
     date = models.DateField()
     start = models.TimeField()
-    end = models.TimeField() 
+    end = models.TimeField()
 
-    #Reservation Status
+        #Reservation Status
     BOOK = "Book"
     PENDING = "Pending"
     BOOKED = "Booked"
@@ -39,7 +39,7 @@ class ReservationModel(models.Model):
         (BOOKED, "Booked"),
         (REJECTED, "Rejected")
     )
-    status = models.CharField(max_length=8, choices=STATUSES, default=BOOK)
+    status = models.CharField(max_length=8, choices=STATUSES, default=PENDING)
 
     def __str__(self):
         return f"{self.venue} booked on {self.date} from {self.start} - {self.end}"
@@ -57,17 +57,18 @@ class ReservationRequest(models.Model):
     #Time info
     date = models.DateField()
     start = models.TimeField()
-    end = models.TimeField() 
+    end = models.TimeField()
 
     def clean(self):
         if self.end <= self.start:
             raise ValidationError('The reservation must end after the start time.')
         
-        conflict = ReservationRequest.objects.filter(
+        conflict = ReservationModel.objects.filter(
             venue = self.venue,
             date = self.date,
             start__lt = self.end,   #Existing start time falls before new end time
-            end__gt = self.start    #Existing end time falls after new start time
+            end__gt = self.start,   #Existing end time falls after new start time
+            status = ReservationModel.BOOKED
         )
         if conflict.exists():
             raise ValidationError('Sorry, there is a conflicting reservation. Please choose a different time or venue.')

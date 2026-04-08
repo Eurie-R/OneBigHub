@@ -4,4 +4,4 @@ from .models import ReservationRequest
 class ReservationRequestForm(forms.ModelForm):
     class Meta:
         model = ReservationRequest
-        exclude = ['venue']
+        exclude = ['venue', 'status']

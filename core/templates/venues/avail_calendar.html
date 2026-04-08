@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %} Booked Slots for {{ venue.name }} {% endblock %}
 {% block content %}
-
+<h1>Availability Calendar</h1>
 {% if reservations %}
     {% for reservation in reservations %}
     <li> {{ reservation.date }} from {{ reservation.start }} - {{ reservation.end }} </li>
