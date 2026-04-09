@@ -58,3 +58,9 @@ def post_detail(request, pk):
             {"detail": "Your account is not linked to an organization profile."},
             status=status.HTTP_403_FORBIDDEN
         )
+    
+    if post.organization != org_profile:
+        return Response(
+            {"detail": "You can only modify your own organization's posts."},
+            status=status.HTTP_403_FORBIDDEN
+        )
