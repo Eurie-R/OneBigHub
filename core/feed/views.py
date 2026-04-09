@@ -64,3 +64,18 @@ def post_detail(request, pk):
             {"detail": "You can only modify your own organization's posts."},
             status=status.HTTP_403_FORBIDDEN
         )
+    
+    if request.method == 'PUT':
+        serializer = PostCreateSerializer(
+            post,
+            data=request.data,
+            partial=True,
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            post = serializer.save()
+            return Response(
+                PostSerializer(post, context={'request': request}).data,
+                status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
