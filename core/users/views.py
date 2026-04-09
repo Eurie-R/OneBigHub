@@ -109,6 +109,8 @@ def dashboard_page(request):
 
     return render(request, 'dashboard.html', context)
 
+def coming_soon(request):
+    return render(request, "coming_soon.html")
 
 # ─────────────────────────────────────────────
 # API Views (returns JSON)

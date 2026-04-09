@@ -59,7 +59,7 @@
             {% else %}
                 <a href="{% url 'users:login_page' %}?next={% url 'venues:venue_type_choice' %}" class="hover:underline">VENUE RESERVATION</a>
             {% endif %}
-            <a href="/feed/" class="hover:underline">ACTIVITY FEED</a>
+            <a href="{% url 'users:coming_soon' %}" class="hover:underline">ACTIVITY FEED</a>
         </div>
     </nav>
 
@@ -78,8 +78,8 @@
                 <p class="text-white/80 max-w-xl mb-8">
                     Project proposals, venue reservations, and org activities — all in one centralized platform for Ateneo student organizations.
                 </p>
-                <a href="/events/"
-                class="px-8 py-3 bg-ateneo-gold text-white font-semibold rounded-lg hover:bg-amber-500 transition shadow-lg">
+                <a href="{% url 'users:coming_soon' %}"
+                    class="px-8 py-3 bg-ateneo-gold text-white font-semibold rounded-lg hover:bg-amber-500 transition shadow-lg">
                     Browse Org Events
                 </a>
             </div>

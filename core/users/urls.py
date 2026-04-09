@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, CurrentUserView, OrganizationProfileView, AdminOfficeProfileView, landing_page, login_page, register_page, profile_setup_page ,dashboard_page
+from .views import RegisterView, LoginView, LogoutView, CurrentUserView, OrganizationProfileView, AdminOfficeProfileView, landing_page, login_page, register_page, profile_setup_page ,dashboard_page, coming_soon
 
 
 app_name = 'users'
@@ -10,6 +10,7 @@ urlpatterns = [
     path('login/', login_page, name='login_page'),
     path('register/', register_page, name='register_page'),
     path('dashboard/', dashboard_page, name='dashboard'),
+    path("coming-soon/", coming_soon, name="coming_soon"),
 
     # API URLs
     path('api/users/register/', RegisterView.as_view(), name='register'),
