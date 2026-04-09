@@ -54,7 +54,11 @@
                     PROJECT PROPOSAL
                 </a>
             {% endif %}
-            <a href="/venues/" class="hover:underline">VENUE RESERVATION</a>
+            {% if user.is_authenticated %}
+                <a href="/venues/" class="hover:underline">VENUE RESERVATION</a>
+            {% else %}
+                <a href="{% url 'users:login_page' %}?next={% url 'venues:venue_type_choice' %}" class="hover:underline">VENUE RESERVATION</a>
+            {% endif %}
             <a href="/feed/" class="hover:underline">ACTIVITY FEED</a>
         </div>
     </nav>
