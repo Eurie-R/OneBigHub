@@ -1,23 +1,83 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
-{% block content %}
-<h1> Review Pending Reservations </h1>
-{% if reservations %}
-    {% for reservation in reservations %}
-    <li> {{ reservation.first_name }} {{ reservation.last_name }} - {{ reservation.venue.name }} on {{ reservation.date }}, {{ reservation.start}}-{{ reservation.end }}
-    <form method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-    <button type="submit" name="action" value="approve">Approve</button>
-    <button type="submit" name="action" value="reject">Reject</button>
-    </form>
-    </li>
-    {% endfor %}
-{% else %}
-    No pending reservations.
-{% endif %}
-{% for message in messages %}
-    {{ message }}
-{% endfor %}
-<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+{% block app_content %}
+
+<div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Review Pending Reservations</h1>
+            <p class="text-gray-500 mt-1">Approve or reject reservation requests.</p>
+        </div>
+
+        <a href="{% url 'venues:venue_type_choice' %}"
+           class="text-sm text-ateneo-blue hover:underline">
+            ← Back
+        </a>
+    </div>
+
+    {% if reservations %}
+    <!-- Table -->
+    <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-gray-100">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Venue</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Date & Time</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for res in reservations %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        {{ res.first_name }} {{ res.last_name }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        {{ res.venue.name }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ res.date }} • {{ res.start }} – {{ res.end }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
+                        <form method="POST" class="flex gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                            <button type="submit" name="action" value="approve"
+                                    class="px-3 py-1 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition text-sm">
+                                Approve
+                            </button>
+                            <button type="submit" name="action" value="reject"
+                                    class="px-3 py-1 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition text-sm">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div class="text-center py-16 bg-white rounded-2xl border border-gray-100">
+        <p class="text-gray-500">No pending reservations.</p>
+    </div>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mt-6 space-y-2">
+        {% for message in messages %}
+            <div class="px-4 py-3 rounded-lg bg-green-100 text-green-700 text-sm">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
 {% endblock %}

@@ -23,7 +23,7 @@
             <a href="{% url 'proposals:proposal_list' %}"
                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
                 {% if current_page == 'proposals' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                {% if user.is_admin_office %}Proposal Queue{% else %}My Proposals{% endif %}
+                {% if user.is_admin_office %}Project Proposal Queue{% else %}My Project Proposals{% endif %}
             </a>
             {% if user.is_admin_office %}
             <a href="{% url 'proposals:admin_tracking_dashboard' %}"
@@ -38,8 +38,9 @@
                 All Proposals
             </a>
             <a href="/venues/"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
-                Venues
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'venues' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                {% if user.is_admin_office %}Venue Reservation Queue{% else %}My Venue Reservations{% endif %}
             </a>
             <a href="/profile/setup/"
                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4

@@ -9,12 +9,17 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def venue_type_choice(request):
-    return render(request, 'venues/venue_type_choice.html')
+    return render(request, 'venues/venue_type_choice.html', {
+        "current_page": "venues"
+    })
 
 @login_required
 def type_1_list(request):
     type_one_venues = Venue.objects.filter(venue_type = "1")
-    return render(request, 'venues/type_1_list.html', { "type_one_venues": type_one_venues })
+    return render(request, 'venues/type_1_list.html', {
+        "type_one_venues": type_one_venues,
+        "current_page": "venues"
+    })
 
 
 @login_required
@@ -23,7 +28,10 @@ def type_2_list(request):
 
     #Only users with an approved PPF can access
     if has_approved_ppf(request):
-        return render(request, 'venues/type_2_list.html', { "type_two_venues": type_two_venues })
+        return render(request, 'venues/type_2_list.html', {
+            "type_two_venues": type_two_venues,
+            "current_page": "venues"
+        })
     else:
         messages.error(request, "Must have approved PPF to reserve a type 2 venue.")
         return redirect('proposals:create_proposal')
@@ -43,7 +51,11 @@ def reservation_request(request, venue_id):
             return redirect('venues:venue_type_choice')
     else:
         form = ReservationRequestForm()
-    return render(request, 'venues/reservation_request.html', { 'venue': venue, 'form': form })
+    return render(request, 'venues/reservation_request.html', {
+        'venue': venue,
+        'form': form,
+        "current_page": "venues"
+        })
 
 def has_approved_ppf(request):
     try:
@@ -58,7 +70,11 @@ def has_approved_ppf(request):
 def avail_calendar(request, venue_id):
     venues = Venue.objects.get(id=venue_id)
     reservations = ReservationModel.objects.filter(venue=venues, status=ReservationModel.BOOKED)
-    return render(request, 'venues/avail_calendar.html', {"venues": venues, "reservations": reservations})
+    return render(request, 'venues/avail_calendar.html', {
+        "venues": venues,
+        "reservations": reservations,
+        "current_page": "venues"
+    })
 
 @login_required
 def review_reservations(request):
@@ -98,7 +114,10 @@ def review_reservations(request):
         return redirect('venues:review_reservations')
 
     pending_reservations = ReservationRequest.objects.filter(status='Pending')
-    return render(request, 'venues/review_reservations.html', {"reservations": pending_reservations})
+    return render(request, 'venues/review_reservations.html', {
+        "reservations": pending_reservations,
+        "current_page": "venues"
+    })
 
 @login_required
 def my_reservations(request):
@@ -138,4 +157,7 @@ def my_reservations(request):
             'status': status
         })
 
-    return render(request, 'venues/my_reservations.html', {"reservations": filtered_res})
+    return render(request, 'venues/my_reservations.html', {
+        "reservations": filtered_res,
+        "current_page": "venues"
+    })

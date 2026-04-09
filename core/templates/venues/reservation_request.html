@@ -1,11 +1,41 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
-{% block content %}
-<h1>Make Reservation for {{ venue.name }} </h1>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Reservation Request</button>
-</form>
-<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+{% block app_content %}
+
+<div class="max-w-3xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+                Make Reservation for {{ venue.name }}
+            </h1>
+            <p class="text-gray-500 mt-1">Fill out the form below to request a reservation.</p>
+        </div>
+
+        <a href="{% url 'venues:venue_type_choice' %}"
+           class="text-sm text-ateneo-blue hover:underline">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Reservation Form Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition">
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Render Django form fields -->
+            {{ form.as_p }}
+
+            <button type="submit"
+                    class="w-full bg-ateneo-blue text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
+                Submit Reservation Request
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
 {% endblock %}
