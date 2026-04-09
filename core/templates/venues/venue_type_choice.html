@@ -1,12 +1,81 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
-{% block content %}
-<h> Choose Venue Type </h>
-<a href = "{% url 'venues:type_1_list' %}">Type 1 Venue</a>
-<a href = "{% url 'venues:type_2_list' %}">Type 2 Venue (Requires Approved PPF) </a>
-<a href = "{% url 'venues:review_reservations' %}">Review Reservations (Admin Office Users Only) </a>
-<a href = "{% url 'venues:my_reservations' %}">Check My Reservations </a>
-{% for message in messages %}
-    {{ message }}
-{% endfor %}
+{% block app_content %}
+
+<div class="max-w-5xl mx-auto">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Venues</h1>
+        <p class="text-gray-500 mt-1">Choose how you want to manage venue reservations.</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- Type 1 -->
+        <a href="{% url 'venues:type_1_list' %}"
+           class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group border border-gray-100">
+
+            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-ateneo-blue">
+                Type 1 Venues
+            </h2>
+            <p class="text-sm text-gray-500 mt-2">
+                Reserve venues that do not require prior approval.
+            </p>
+        </a>
+
+        <!-- Type 2 -->
+        <a href="{% url 'venues:type_2_list' %}"
+           class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group border border-gray-100">
+
+            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-ateneo-blue">
+                Type 2 Venues
+            </h2>
+            <p class="text-sm text-gray-500 mt-2">
+                Requires an approved PPF before reservation.
+            </p>
+        </a>
+
+        <!-- Review Reservations (Admin only) -->
+        {% if user.is_admin_office %}
+        <a href="{% url 'venues:review_reservations' %}"
+           class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group border border-gray-100">
+
+            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-ateneo-blue">
+                Review Reservations
+            </h2>
+            <p class="text-sm text-gray-500 mt-2">
+                Approve or reject venue reservation requests.
+            </p>
+        </a>
+        {% endif %}
+
+        <!-- My Reservations -->
+        <a href="{% url 'venues:my_reservations' %}"
+           class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group border border-gray-100">
+
+            <h2 class="text-lg font-semibold text-gray-800 group-hover:text-ateneo-blue">
+                My Reservations
+            </h2>
+            <p class="text-sm text-gray-500 mt-2">
+                View and track your submitted reservations.
+            </p>
+        </a>
+
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mt-6 space-y-2">
+        {% for message in messages %}
+            <div class="px-4 py-3 rounded-lg bg-green-100 text-green-700 text-sm">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
 {% endblock %}

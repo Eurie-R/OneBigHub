@@ -1,12 +1,72 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
-{% block content %}
-<h> Type 2 Venues </h>
-{% for venue in type_two_venues %}
-<li> {{ venue.name }} - Type 2 Venue</li>
-<p> {{ venue.description }} </p>
-<a href = "{% url 'venues:avail_calendar' venue.id %}">Check Availability</a>
-<a href = "{% url 'venues:reservation_request' venue.id %}">Book</a>
-{% endfor %}
-<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+{% block app_content %}
+
+<div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Type 2 Venues</h1>
+            <p class="text-gray-500 mt-1">
+                Requires an approved PPF before reservation
+            </p>
+        </div>
+
+        <a href="{% url 'venues:venue_type_choice' %}"
+           class="text-sm text-ateneo-blue hover:underline">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Venue Cards -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {% for venue in type_two_venues %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition">
+
+            <!-- Info -->
+            <div>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-800">
+                        {{ venue.name }}
+                    </h2>
+
+                    <!-- Tag -->
+                    <span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">
+                        Requires PPF
+                    </span>
+                </div>
+
+                <p class="text-sm text-gray-500 mt-2 line-clamp-3">
+                    {{ venue.description }}
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex gap-2">
+
+                <a href="{% url 'venues:avail_calendar' venue.id %}"
+                   class="flex-1 text-center px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                    Availability
+                </a>
+
+                <a href="{% url 'venues:reservation_request' venue.id %}"
+                   class="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-ateneo-blue text-white hover:opacity-90 transition">
+                    Book
+                </a>
+
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center text-gray-500 py-12">
+            No Type 2 venues available.
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}

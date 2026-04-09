@@ -1,20 +1,51 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
-{% block content %}
-<h1>Availability Calendar</h1>
-{% if reservations %}
-    {% for reservation in reservations %}
-    <li> {{ reservation.date }} from {{ reservation.start }} - {{ reservation.end }} </li>
-    {% endfor %}
-{% else %}
-    <li>No one has booked this venue yet, all time slots are available.</li>
-{% endif %}
+{% block app_content %}
 
-<a href = "{% url 'venues:venue_type_choice' %}">Back to Venue Navigation</a>
+<div class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Availability Calendar</h1>
+            <p class="text-gray-500 mt-1">Check existing bookings for this venue</p>
+        </div>
+
+        <a href="{% url 'venues:venue_type_choice' %}"
+           class="text-sm text-ateneo-blue hover:underline">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Reservations List -->
+    <div class="space-y-4">
+
+        {% if reservations %}
+            {% for res in reservations %}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex justify-between items-center hover:shadow-md transition">
+
+                <div>
+                    <p class="text-sm text-gray-600">
+                        <span class="font-semibold text-gray-800">{{ res.date }}</span> 
+                        • {{ res.start }} – {{ res.end }}
+                    </p>
+                </div>
+
+                <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                    Booked
+                </span>
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Empty state -->
+            <div class="text-center py-16 bg-white rounded-2xl border border-gray-100">
+                <p class="text-gray-500">No one has booked this venue yet. All time slots are available.</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+</div>
 
 {% endblock %}
-
-
-
-
-
