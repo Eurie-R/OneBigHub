@@ -25,18 +25,6 @@
                 {% if current_page == 'proposals' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
                 {% if user.is_admin_office %}Project Proposal Queue{% else %}My Project Proposals{% endif %}
             </a>
-            {% if user.is_admin_office %}
-            <a href="{% url 'proposals:admin_tracking_dashboard' %}"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'tracking' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                Status Tracking
-            </a>
-            {% endif %}
-            <a href="{% url 'proposals:public_proposals' %}"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
-                {% if current_page == 'public' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
-                All Proposals
-            </a>
             <a href="/venues/"
                 class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
                 {% if current_page == 'venues' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
