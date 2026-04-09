@@ -20,3 +20,17 @@ def post_list(request):
  
     serializer = PostSerializer(posts, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsOrganization])
+def post_create(request):
+
+    serializer = PostCreateSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        post = serializer.save(organization=org_profile)
+        # Return the full representation (with embedded org info) after creation
+        return Response(
+            PostSerializer(post, context={'request': request}).data,
+            status=status.HTTP_201_CREATED
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
