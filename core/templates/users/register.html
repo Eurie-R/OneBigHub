@@ -65,6 +65,14 @@
                 </p>
             </div>
 
+            <!-- Back to Home link below the card -->
+            <div class="mt-4">
+                <a href="{% url 'users:landing' %}"
+                class="text-white text-sm font-semibold hover:underline">
+                    ← Back to Home
+                </a>
+            </div>
+
             <p class="text-center text-white/50 text-xs mt-6 md:hidden">
                 Only @student.ateneo.edu and @ateneo.edu accounts are allowed.
             </p>
@@ -81,6 +89,9 @@
 </div>
 
 <script>
+const urlParams = new URLSearchParams(window.location.search);
+const nextUrl = urlParams.get('next') || '/';  // fallback to landing page
+
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -111,7 +122,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
         if (response.ok) {
             successDiv.textContent = 'Account created successfully! Redirecting to login...';
             successDiv.classList.remove('hidden');
-            setTimeout(() => window.location.href = '/login/', 1500);
+            setTimeout(() => window.location.href = `/login/?next=${encodeURIComponent(nextUrl)}`, 1500);
         } else {
             let errorMsg = '';
             for (const [field, messages] of Object.entries(data)) {

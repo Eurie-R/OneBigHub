@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen flex bg-gray-50">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-ateneo-blue min-h-screen flex flex-col">
+        <a href="{% url 'users:landing' %}" 
+        class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
+
+            <img src="{% static 'core/images/white_eagle.png' %}" class="w-10 h-10">
+            <span class="text-white font-bold text-lg">One Big Hub</span>
+
+        </a>
+
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <a href="/dashboard/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'dashboard' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                Dashboard
+            </a>
+            <a href="{% url 'proposals:proposal_list' %}"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'proposals' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                {% if user.is_admin_office %}Proposal Queue{% else %}My Proposals{% endif %}
+            </a>
+            {% if user.is_admin_office %}
+            <a href="{% url 'proposals:admin_tracking_dashboard' %}"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'tracking' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                Status Tracking
+            </a>
+            {% endif %}
+            <a href="{% url 'proposals:public_proposals' %}"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'public' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                All Proposals
+            </a>
+            <a href="/venues/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4 border-transparent text-white/80 hover:bg-white/10 hover:text-white">
+                Venues
+            </a>
+            <a href="/profile/setup/"
+                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition border-l-4
+                {% if current_page == 'profile' %}border-ateneo-gold text-white bg-white/10{% else %}border-transparent text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                Profile Settings
+            </a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-white/20">
+            <button onclick="logout()"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm transition transform hover:scale-105">
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main id="dashboard" class="flex-1 p-8 overflow-y-auto"
+          data-user-is-org="{{ user.is_org|yesno:'true,false' }}">
+        {% block app_content %}{% endblock %}
+    </main>
+
+</div>
+
+<script>
+async function logout() {
+    await fetch('/api/users/logout/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    });
+    window.location.href = '/';
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script>
+{% endblock %}
+
+

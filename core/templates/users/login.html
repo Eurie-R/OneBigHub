@@ -53,8 +53,17 @@
                 <!-- Footer -->
                 <p class="text-center text-sm text-gray-500 mt-6">
                     Don't have an account?
-                    <a href="/register/" class="text-ateneo-light font-semibold hover:underline">Register</a>
+                    <a href="{% url 'users:register_page' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
+                        class="text-ateneo-light font-semibold hover:underline">Register</a>
                 </p>
+            </div>
+
+            <!-- Back to Home link below the card -->
+            <div class="mt-4">
+                <a href="{% url 'users:landing' %}"
+                class="text-white text-sm font-semibold hover:underline">
+                    ← Back to Home
+                </a>
             </div>
 
             <p class="text-center text-white/50 text-xs mt-6 md:hidden">
@@ -65,6 +74,10 @@
 </div>
 
 <script>
+    // Grab ?next=... from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const nextUrl = urlParams.get('next') || '/';  // default to landing page
+
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -90,7 +103,7 @@
             const data = await response.json();
 
             if (response.ok) {
-                window.location.href = '/dashboard/';
+                window.location.href = nextUrl; // redirect to next if exists, else landing page
             } else {
                 errorDiv.textContent = data.error || 'Invalid credentials. Please try again.';
                 errorDiv.classList.remove('hidden');

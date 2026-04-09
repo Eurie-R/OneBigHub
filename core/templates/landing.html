@@ -10,21 +10,36 @@
     <header class="bg-white shadow">
         <div class="px-8 py-1 flex items-center justify-between">
             <!-- Left: One Big Hub -->
-            <div class="flex items-center gap-4">
+            <a href="{% url 'users:landing' %}" class="flex items-center gap-4">
                 <img src="{% static 'core/images/school_crest.png' %}" class="w-28">
                 <span class="text-ateneo-blue font-bold text-xl">One Big Hub</span>
-            </div>
+            </a>
 
             <!-- Right: Login/Register -->
             <div class="flex gap-3">
-                <a href="/login/"
-                   class="px-5 py-2 text-ateneo-blue border border-ateneo-blue rounded-lg hover:bg-ateneo-blue hover:text-white transition text-sm">
-                    Login
-                </a>
-                <a href="/register/"
-                   class="px-5 py-2 bg-ateneo-blue text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
-                    Register
-                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:dashboard' %}"
+                        class="px-5 py-2 bg-ateneo-gold text-white rounded-lg hover:bg-amber-500 transition text-sm font-semibold">
+                        My Dashboard
+                    </a>
+
+                    <form action="{% url 'users:logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="px-6 py-2 text-ateneo-blue bg-white border border-ateneo-blue rounded-lg hover:bg-ateneo-blue hover:text-white transition text-sm font-semibold">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="/login/"
+                    class="px-5 py-2 text-ateneo-blue border border-ateneo-blue rounded-lg hover:bg-ateneo-blue hover:text-white transition text-sm">
+                        Login
+                    </a>
+                    <a href="/register/"
+                    class="px-5 py-2 bg-ateneo-blue text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
+                        Register
+                    </a>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -32,8 +47,14 @@
     <!-- Home Bar / Navigation -->
     <nav class="bg-ateneo-blue text-white">
         <div class="max-w-7xl mx-auto px-6 flex justify-center gap-48 py-5">
+            {% if user.is_authenticated %}
+                <a href="{% url 'proposals:create_proposal' %}" class="hover:underline">PROJECT PROPOSAL</a>
+            {% else %}
+                <a href="{% url 'users:login_page' %}?next={% url 'proposals:create_proposal' %}" class="hover:underline">
+                    PROJECT PROPOSAL
+                </a>
+            {% endif %}
             <a href="/venues/" class="hover:underline">VENUE RESERVATION</a>
-            <a href="/api/proposals/create/" class="hover:underline">PROJECT PROPOSAL</a>
             <a href="/feed/" class="hover:underline">ACTIVITY FEED</a>
         </div>
     </nav>
@@ -51,7 +72,7 @@
                     One place for every <span class="text-ateneo-gold">org event</span>.
                 </h1>
                 <p class="text-white/80 max-w-xl mb-8">
-                    Venue reservations, project proposals, and org activities — all in one centralized platform for Ateneo student organizations.
+                    Project proposals, venue reservations, and org activities — all in one centralized platform for Ateneo student organizations.
                 </p>
                 <a href="/events/"
                 class="px-8 py-3 bg-ateneo-gold text-white font-semibold rounded-lg hover:bg-amber-500 transition shadow-lg">
