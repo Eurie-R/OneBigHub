@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+<h1>{% if edit_mode %}Edit Post{% else %}New Post{% endif %}</h1>
+ 
+{% for message in messages %}
+    <p>{{ message }}</p>
+{% endfor %}
+ 
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if edit_mode %}Save Changes{% else %}Publish Post{% endif %}</button>
+</form>
+ 
+<a href="{% url 'feed:feed_list' %}">Back to Feed</a>
+{% endblock %}
