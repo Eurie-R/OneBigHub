@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>Posted by {{ post.organization.org_name }} on {{ post.created_at|date:"F j, Y" }}</p>
+ 
+{% for message in messages %}
+    <p>{{ message }}</p>
+{% endfor %}
+ 
+<p>{{ post.body }}</p>
+ 
+{% if post.image %}
+    <img src="{{ post.image.url }}" alt="Post image">
+{% endif %}
+ 
+{% if post.event_start %}
+    <p>Event Start: {{ post.event_start|date:"F j, Y g:i A" }}</p>
+    <p>Event End: {{ post.event_end|date:"F j, Y g:i A" }}</p>
+{% endif %}
+ 
+{% if post.location %}
+    <p>Location: {{ post.location }}</p>
+{% endif %}
+ 
+{% if user.is_org and post.organization.user == user %}
+    <a href="{% url 'feed:feed_edit' post.pk %}">Edit Post</a>
+    <form method="POST" action="{% url 'feed:feed_delete' post.pk %}">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Delete this post?')">Delete Post</button>
+    </form>
+{% endif %}
+ 
+<a href="{% url 'feed:feed_list' %}">Back to Feed</a>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+<h1>Organization Feed</h1>
+ 
+{% if user.is_org %}
+<a href="{% url 'feed:feed_create' %}">+ New Post</a>
+{% endif %}
+ 
+{% for message in messages %}
+    <p>{{ message }}</p>
+{% endfor %}
+ 
+{% for post in posts %}
+    <div>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.organization.org_name }} — {{ post.created_at|date:"F j, Y" }}</p>
+        <p>{{ post.body }}</p>
+        {% if post.event_start %}
+            <p>Event: {{ post.event_start|date:"F j, Y g:i A" }} to {{ post.event_end|date:"g:i A" }}</p>
+        {% endif %}
+        {% if post.location %}
+            <p>Location: {{ post.location }}</p>
+        {% endif %}
+        <a href="{% url 'feed:feed_detail' post.pk %}">View details</a>
+    </div>
+    <hr>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
+{% endblock %}
