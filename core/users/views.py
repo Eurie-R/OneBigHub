@@ -12,6 +12,7 @@ from .serializers import (
 from .models import OrganizationProfile, AdminOfficeProfile
 from .permissions import IsProfileOwner
 from proposals.models import Proposal
+from django.contrib.auth.decorators import login_required
 
 
 # ─────────────────────────────────────────────
@@ -228,13 +229,10 @@ class AdminOfficeProfileView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+@login_required(login_url='/login/')
 def profile_setup_page(request):
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
     context = {
-        'user': request.user,
-        'current_page': 'profile',  # <-- highlight sidebar here
+        'current_page': 'profile',
     }
 
     if request.user.is_org:
