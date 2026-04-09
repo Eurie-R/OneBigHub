@@ -7,6 +7,42 @@ from django.shortcuts import get_object_or_404
 from users.permissions import IsAteneoUser, IsOrganization
 from .models import Post
 from .serializers import PostSerializer, PostCreateSerializer
+from .forms import PostForm
+
+@login_required
+def feed_list(request):
+    posts = Post.objects.select_related('organization').all()
+    return render(request, 'feed/feed_list.html', {'posts': posts})
+
+@login_required
+def feed_detail(request, pk):
+    post = get_object_or_404(Post.objects.select_related('organization'), pk=pk)
+    return render(request, 'feed/feed_detail.html', {'post': post})
+
+@login_required
+def feed_create(request):
+    if not request.user.is_org:
+        messages.error(request, "Only organization accounts can create posts.")
+        return redirect('feed:feed_list')
+ 
+    try:
+        org_profile = request.user.org_profile
+    except Exception:
+        messages.error(request, "Your account is not linked to an organization profile.")
+        return redirect('feed:feed_list')
+ 
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.organization = org_profile
+            post.save()
+            messages.success(request, "Post published successfully.")
+            return redirect('feed:feed_detail', pk=post.pk)
+    else:
+        form = PostForm()
+ 
+    return render(request, 'feed/feed_form.html', {'form': form, 'edit_mode': False})
 
 @api_view(['GET'])
 @permission_classes([IsAteneoUser])
