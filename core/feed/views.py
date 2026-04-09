@@ -79,3 +79,10 @@ def post_detail(request, pk):
                 status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'DELETE':
+        post.delete()
+        return Response(
+            {"detail": "Post deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT
+        )
