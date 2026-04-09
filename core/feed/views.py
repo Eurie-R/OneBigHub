@@ -34,3 +34,20 @@ def post_create(request):
             status=status.HTTP_201_CREATED
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAteneoUser])
+def post_detail(request, pk):
+
+    post = get_object_or_404(Post.objects.select_related('organization'), pk=pk)
+ 
+    if request.method == 'GET':
+        serializer = PostSerializer(post, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+ 
+    if not request.user.is_org:
+        return Response(
+            {"detail": "Only organization accounts can modify posts."},
+            status=status.HTTP_403_FORBIDDEN
+        )
