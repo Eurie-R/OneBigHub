@@ -44,6 +44,58 @@ def feed_create(request):
  
     return render(request, 'feed/feed_form.html', {'form': form, 'edit_mode': False})
 
+@login_required
+def feed_edit(request, pk):
+    post = get_object_or_404(Post.objects.select_related('organization'), pk=pk)
+ 
+    if not request.user.is_org:
+        messages.error(request, "Only organization accounts can edit posts.")
+        return redirect('feed:feed_detail', pk=pk)
+ 
+    try:
+        org_profile = request.user.org_profile
+    except Exception:
+        messages.error(request, "Your account is not linked to an organization profile.")
+        return redirect('feed:feed_list')
+ 
+    if post.organization != org_profile:
+        messages.error(request, "You can only edit your own organization's posts.")
+        return redirect('feed:feed_detail', pk=pk)
+ 
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Post updated successfully.")
+            return redirect('feed:feed_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+ 
+    return render(request, 'feed/feed_form.html', {'form': form, 'edit_mode': True})
+
+@login_required
+@require_POST
+def feed_delete(request, pk):
+    post = get_object_or_404(Post.objects.select_related('organization'), pk=pk)
+ 
+    if not request.user.is_org:
+        messages.error(request, "Only organization accounts can delete posts.")
+        return redirect('feed:feed_detail', pk=pk)
+ 
+    try:
+        org_profile = request.user.org_profile
+    except Exception:
+        messages.error(request, "Your account is not linked to an organization profile.")
+        return redirect('feed:feed_list')
+ 
+    if post.organization != org_profile:
+        messages.error(request, "You can only delete your own organization's posts.")
+        return redirect('feed:feed_detail', pk=pk)
+ 
+    post.delete()
+    messages.success(request, "Post deleted.")
+    return redirect('feed:feed_list')
+
 @api_view(['GET'])
 @permission_classes([IsAteneoUser])
 def post_list(request):
