@@ -16,3 +16,12 @@ class Post(models.Model):
     event_start = models.DateTimeField(null=True, blank=True)
     event_end = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=255, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"[{self.organization.org_name}] {self.title}"
