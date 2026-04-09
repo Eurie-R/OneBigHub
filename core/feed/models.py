@@ -13,6 +13,12 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
 
+    picture = models.ImageField(
+        upload_to='feed/images/%Y/%m',
+        blank=True,
+        null=True
+    )
+
     event_start = models.DateTimeField(null=True, blank=True)
     event_end = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=255, blank=True)
