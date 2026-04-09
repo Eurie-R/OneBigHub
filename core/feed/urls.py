@@ -1,7 +1,10 @@
 from django.urls import path
+from . import views
 
 app_name = 'feed'
 
 urlpatterns = [
-    # Routes will be added in Iteration 2
+    path('', views.post_list, name='post_list'),
+    path('create/', views.post_create, name='post_create'),
+    path('<int:pk>/', views.post_detail, name='post_detail'),
 ]
