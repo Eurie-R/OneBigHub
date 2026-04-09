@@ -25,6 +25,14 @@ def post_list(request):
 @permission_classes([IsOrganization])
 def post_create(request):
 
+    try:
+        org_profile = request.user.org_profile
+    except Exception:
+        return Response(
+            {"detail": "Your account is not linked to an organization profile."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
     serializer = PostCreateSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         post = serializer.save(organization=org_profile)
