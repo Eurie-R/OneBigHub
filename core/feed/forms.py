@@ -4,7 +4,7 @@ from .models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'body', 'image', 'event_start', 'event_end', 'location']
+        fields = ['title', 'body', 'picture', 'event_start', 'event_end', 'location']
         widgets = {
             'event_start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'event_end':   forms.DateTimeInput(attrs={'type': 'datetime-local'}),
