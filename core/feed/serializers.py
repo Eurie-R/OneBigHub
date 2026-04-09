@@ -27,3 +27,28 @@ class PostSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'organization', 'created_at', 'updated_at']
 
+class PostCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = [
+            'title',
+            'body',
+            'image',
+            'event_start',
+            'event_end',
+            'location',
+        ]
+
+    def validate(self, attrs):
+        start = attrs.get('event_start')
+        end=attrs.get('event_end')
+        if bool(start) != bool(end):
+            raise serializers.ValidationError(
+                "Both event_start and event_end must be provided together."
+            )
+        if start and end and end <= start:
+            raise serializers.ValidationError(
+                "event_end must be after event_start."
+            )
+        return attrs
