@@ -15,7 +15,6 @@ User = get_user_model()
 # ─────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────
- 
 def make_org_user(email, org_name):
     user = User.objects.create_user(
         username=email.split('@')[0],
@@ -23,14 +22,14 @@ def make_org_user(email, org_name):
         password='testpass123',
         role=User.Role.ORGANIZATION,
     )
-    org = OrganizationProfile.objects.create(
-        user=user,
-        org_name=org_name,
-        contact_email=email,
-        moderator_name='Test Mod',
-        building='Main',
-        room_number='101',
-    )
+    # Signal already created the profile — just update and return it
+    org = user.org_profile
+    org.org_name = org_name
+    org.contact_email = email
+    org.moderator_name = 'Test Mod'
+    org.building = 'Main'
+    org.room_number = '101'
+    org.save()
     return user, org
  
  
@@ -62,7 +61,9 @@ class PostModelTest(TestCase):
         self.assertIn('Annual Gala', str(post))
  
     def test_ordering_newest_first(self):
+        import time
         p1 = Post.objects.create(organization=self.org, title='Old Post', body='...')
+        time.sleep(0.01)  # ensure different timestamps
         p2 = Post.objects.create(organization=self.org, title='New Post', body='...')
         posts = list(Post.objects.all())
         self.assertEqual(posts[0].pk, p2.pk)

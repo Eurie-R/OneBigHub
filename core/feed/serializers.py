@@ -18,7 +18,7 @@ class PostSerializer(serializers.ModelSerializer):
             'organization',
             'title',
             'body',
-            'image',
+            'picture',
             'event_start',
             'event_end',
             'location',
@@ -34,7 +34,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
         fields = [
             'title',
             'body',
-            'image',
+            'picture',
             'event_start',
             'event_end',
             'location',
