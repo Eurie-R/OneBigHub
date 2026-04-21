@@ -4,23 +4,24 @@ from .models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'body', 'picture', 'event_start', 'event_end', 'location']
+        fields = ['title', 'body', 'event_start', 'event_end', 'location']
+
         widgets = {
-            'event_start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'event_end':   forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'title': forms.TextInput(attrs={
+                'class': 'w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ateneo-blue'
+            }),
+            'body': forms.Textarea(attrs={
+                'class': 'w-full border border-gray-300 rounded-lg p-2 h-32 focus:outline-none focus:ring-2 focus:ring-ateneo-blue'
+            }),
+            'event_start': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'w-full border border-gray-300 rounded-lg p-2'
+            }),
+            'event_end': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'w-full border border-gray-300 rounded-lg p-2'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ateneo-blue'
+            }),
         }
- 
-    def clean(self):
-        cleaned_data = super().clean()
-        start = cleaned_data.get('event_start')
-        end = cleaned_data.get('event_end')
- 
-        if bool(start) != bool(end):
-            raise forms.ValidationError(
-                "Both event start and event end must be provided together."
-            )
-        if start and end and end <= start:
-            raise forms.ValidationError(
-                "Event end must be after event start."
-            )
-        return cleaned_data

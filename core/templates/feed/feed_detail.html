@@ -1,35 +1,134 @@
 {% extends "base.html" %}
- 
+{% load static %}
+
+{% block title %}{{ post.title }} — One Big Hub{% endblock %}
+
 {% block content %}
-<h1>{{ post.title }}</h1>
-<p>Posted by {{ post.organization.org_name }} on {{ post.created_at|date:"F j, Y" }}</p>
- 
-{% for message in messages %}
-    <p>{{ message }}</p>
-{% endfor %}
- 
-<p>{{ post.body }}</p>
- 
-{% if post.picture %}
-    <img src="{{ post.picture.url }}" alt="Post image">
-{% endif %}
- 
-{% if post.event_start %}
-    <p>Event Start: {{ post.event_start|date:"F j, Y g:i A" }}</p>
-    <p>Event End: {{ post.event_end|date:"F j, Y g:i A" }}</p>
-{% endif %}
- 
-{% if post.location %}
-    <p>Location: {{ post.location }}</p>
-{% endif %}
- 
-{% if user.is_org and post.organization.user == user %}
-    <a href="{% url 'feed:feed_edit' post.pk %}">Edit Post</a>
-    <form method="POST" action="{% url 'feed:feed_delete' post.pk %}">
-        {% csrf_token %}
-        <button type="submit" onclick="return confirm('Delete this post?')">Delete Post</button>
-    </form>
-{% endif %}
- 
-<a href="{% url 'feed:feed_list' %}">Back to Feed</a>
+
+<div class="min-h-screen bg-gray-50">
+
+    <!-- Header -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-3xl mx-auto px-6 py-6">
+
+            <a href="{% url 'feed:feed_list' %}" class="text-sm text-gray-500 hover:text-gray-700">
+                ← Back to Feed
+            </a>
+
+        </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-6 py-8">
+
+        <!-- Messages -->
+        {% for message in messages %}
+        <div class="mb-4 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 text-sm">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <!-- Post Card -->
+        <div class="bg-white rounded-xl shadow p-6">
+
+            <!-- Title + Org -->
+            <div class="mb-4">
+
+                <h1 class="text-2xl font-bold text-gray-800">
+                    {{ post.title }}
+                </h1>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Posted by
+                    <span class="font-medium text-gray-700">
+                        {{ post.organization.org_name }}
+                    </span>
+                    · {{ post.created_at|date:"M j, Y g:i A" }}
+                </p>
+
+            </div>
+
+            <!-- Event Badge -->
+            {% if post.event_start %}
+            <div class="mb-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                Event Announcement
+            </div>
+            {% endif %}
+
+            <!-- Body -->
+            <div class="text-gray-700 leading-relaxed whitespace-pre-line">
+                {{ post.body }}
+            </div>
+
+            <!-- Image -->
+            {% if post.picture %}
+            <div class="mt-6">
+                <img src="{{ post.picture.url }}"
+                     alt="Post image"
+                     class="rounded-lg w-full object-cover border">
+            </div>
+            {% endif %}
+
+            <!-- Event Details -->
+            {% if post.event_start %}
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg border">
+
+                <h2 class="text-sm font-semibold text-gray-700 mb-2">
+                    Event Details
+                </h2>
+
+                <p class="text-sm text-gray-600">
+                    📅 {{ post.event_start|date:"M j, Y g:i A" }}
+                    →
+                    {{ post.event_end|date:"M j, Y g:i A" }}
+                </p>
+
+            </div>
+            {% endif %}
+
+            <!-- Location -->
+            {% if post.location %}
+            <div class="mt-4 text-sm text-gray-600">
+                📍 {{ post.location }}
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="mt-8 pt-6 border-t flex items-center justify-between">
+
+                <!-- Left -->
+                <a href="{% url 'feed:feed_list' %}"
+                   class="text-sm text-gray-500 hover:text-gray-700">
+                    ← Back
+                </a>
+
+                <!-- Right -->
+                {% if user.is_org and post.organization.user == user %}
+
+                <div class="flex items-center gap-3">
+
+                    <a href="{% url 'feed:feed_edit' post.pk %}"
+                       class="px-4 py-2 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
+                        Edit
+                    </a>
+
+                    <form method="POST"
+                          action="{% url 'feed:feed_delete' post.pk %}"
+                          onsubmit="return confirm('Are you sure you want to delete this post?');">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 {% endblock %}

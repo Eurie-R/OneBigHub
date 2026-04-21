@@ -12,7 +12,6 @@ from .models import Post
 from .serializers import PostSerializer, PostCreateSerializer
 from .forms import PostForm
 
-@login_required
 def feed_list(request):
     posts = Post.objects.select_related('organization').all()
     return render(request, 'feed/feed_list.html', {'posts': posts})
