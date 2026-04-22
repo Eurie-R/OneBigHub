@@ -6,7 +6,7 @@ from .models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'body', 'event_start', 'event_end', 'location']
+        fields = ['title', 'body', 'picture', 'event_start', 'event_end', 'location']
 
         widgets = {
             'title': forms.TextInput(attrs={
@@ -17,6 +17,11 @@ class PostForm(forms.ModelForm):
             'body': forms.Textarea(attrs={
                 'class': 'w-full border border-gray-300 rounded-lg p-2 h-32 focus:outline-none focus:ring-2 focus:ring-ateneo-blue',
                 'placeholder': 'Write event details, instructions, or important notes...'
+            }),
+            
+            'picture': forms.FileInput(attrs={
+            'class': 'w-full border border-gray-300 rounded-lg p-2',
+            'accept': 'image/*'
             }),
 
             'event_start': forms.DateTimeInput(attrs={
