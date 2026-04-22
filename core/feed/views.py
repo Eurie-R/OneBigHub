@@ -16,7 +16,6 @@ def feed_list(request):
     posts = Post.objects.select_related('organization').all()
     return render(request, 'feed/feed_list.html', {'posts': posts})
 
-@login_required
 def feed_detail(request, pk):
     post = get_object_or_404(Post.objects.select_related('organization'), pk=pk)
     return render(request, 'feed/feed_detail.html', {'post': post})

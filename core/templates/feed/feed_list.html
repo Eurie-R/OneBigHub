@@ -52,8 +52,6 @@
             <div class="flex items-center gap-6 text-sm font-medium">
                 <a href="{% url 'users:landing' %}" class="hover:underline">
                     ← Back to Home
-                </a>
-                <span class="font-semibold">Activity Feed</span>
             </div>
 
             <div>
@@ -101,7 +99,7 @@
                     </div>
 
                     {% if post.event_start %}
-                    <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold">
+                    <span class="inline-flex items-center bg-green-100 text-green-800 text-xs px-4 py-0.4 rounded-full font-semibold">
                         Event
                     </span>
                     {% endif %}
@@ -111,7 +109,7 @@
                     {{ post.body }}
                 </p>
 
-                <div class="mt-4 text-ateneo-blue text-sm font-medium">
+                <div class="mt-4 text-ateneo-blue text-sm font-medium hover:underline">
                     View details →
                 </div>
 

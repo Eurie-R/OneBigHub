@@ -7,13 +7,53 @@
 
 <div class="min-h-screen bg-gray-50">
 
-    <!-- Header -->
-    <div class="bg-white shadow-sm">
-        <div class="max-w-3xl mx-auto px-6 py-6">
+    <!-- HEADER -->
+    <header class="bg-white shadow">
+        <div class="px-8 py-2 flex items-center justify-between">
 
-            <a href="{% url 'feed:feed_list' %}" class="text-sm text-gray-500 hover:text-gray-700">
-                ← Back to Feed
+            <a href="{% url 'users:landing' %}" class="flex items-center gap-3">
+                <img src="{% static 'core/images/school_crest.png' %}" class="w-24">
+                <span class="text-ateneo-blue font-bold text-lg">One Big Hub</span>
             </a>
+
+            <div class="flex gap-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:dashboard' %}"
+                       class="px-5 py-2 bg-ateneo-gold text-white rounded-lg hover:bg-amber-500 text-sm font-semibold">
+                        My Dashboard
+                    </a>
+
+                    <form action="{% url 'users:logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="px-5 py-2 text-ateneo-blue border border-ateneo-blue rounded-lg hover:bg-ateneo-blue hover:text-white text-sm">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'users:login_page' %}"
+                       class="px-5 py-2 text-ateneo-blue border border-ateneo-blue rounded-lg hover:bg-ateneo-blue hover:text-white text-sm">
+                        Login
+                    </a>
+                    <a href="{% url 'users:register_page' %}"
+                       class="px-5 py-2 bg-ateneo-blue text-white rounded-lg hover:bg-blue-700 text-sm font-semibold">
+                        Register
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Nav Bar -->
+    <div class="bg-ateneo-blue text-white">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="{% url 'users:landing' %}" class="hover:underline">
+                    ← Back to Home
+                </a>
+            </div>
 
         </div>
     </div>
@@ -97,8 +137,8 @@
 
                 <!-- Left -->
                 <a href="{% url 'feed:feed_list' %}"
-                   class="text-sm text-gray-500 hover:text-gray-700">
-                    ← Back
+                class="mr-auto text-sm text-gray-500 hover:underline">
+                    ← Back to Feed
                 </a>
 
                 <!-- Right -->

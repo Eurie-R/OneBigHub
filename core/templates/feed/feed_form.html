@@ -40,20 +40,19 @@
 
     <!-- BLUE BAR -->
     <div class="bg-ateneo-blue text-white">
-        <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
 
-            <a href="{% url 'feed:feed_list' %}" class="hover:underline text-sm">
-                ← Back to Feed
-            </a>
-
-            <span class="font-semibold">
-                {% if edit_mode %}Edit Post{% else %}Create Post{% endif %}
-            </span>
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="{% url 'feed:feed_list' %}" class="hover:underline">
+                    ← Back to Feed
+                </a>
+            </div>
 
         </div>
     </div>
 
     <!-- FORM -->
+
     <div class="max-w-3xl mx-auto px-6 py-8">
 
         {% for message in messages %}
@@ -64,6 +63,18 @@
 
         <div class="bg-white rounded-xl shadow p-6">
 
+            <div class="mb-6">
+                <h1 class="text-xl font-semibold text-gray-800">
+                    {% if edit_mode %}Edit Post{% else %}Create Post{% endif %}
+                </h1>
+            </div>
+
+            {% if form.errors %}
+            <div class="px-4 py-4 bg-red-50 text-red-700 text-sm rounded-lg text-left">
+                Please fix the errors below before submitting.
+            </div>
+            {% endif %}
+
             <form method="POST" enctype="multipart/form-data" class="space-y-6">
                 {% csrf_token %}
 
@@ -72,6 +83,10 @@
                         Title
                     </label>
                     {{ form.title }}
+
+                    <p class="text-red-500 text-xs mt-1">
+                        {{ form.title.errors }}
+                    </p>
                 </div>
 
                 <div>
@@ -79,16 +94,39 @@
                         Content
                     </label>
                     {{ form.body }}
+
+                    <p class="text-red-500 text-xs mt-1">
+                        {{ form.body.errors }}
+                    </p>
                 </div>
 
                 <div class="border-t pt-4">
                     <h2 class="text-sm font-semibold text-gray-700 mb-3">
-                        Event Details (optional)
+                        Event Date (optional)
                     </h2>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>{{ form.event_start }}</div>
-                        <div>{{ form.event_end }}</div>
+
+                        <div>
+                            {{ form.event_start }}
+
+                            {% for error in form.event_start.errors %}
+                                <p class="text-red-500 text-xs mt-1">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
+                        <div>
+                            {{ form.event_end }}
+
+                            {% for error in form.event_end.errors %}
+                                <p class="text-red-500 text-xs mt-1">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
                     </div>
                 </div>
 
@@ -97,17 +135,21 @@
                         Location
                     </label>
                     {{ form.location }}
+
+                    <p class="text-red-500 text-xs mt-1">
+                        {{ form.location.errors }}
+                    </p>
                 </div>
 
-                <div class="flex justify-between pt-4 border-t">
+                <div class="mt-6 flex items-center gap-3">
 
                     <a href="{% url 'feed:feed_list' %}"
-                       class="text-sm text-gray-500 hover:text-gray-700">
+                    class="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
                         Cancel
                     </a>
 
                     <button type="submit"
-                        class="px-6 py-2 bg-ateneo-gold text-white rounded-lg hover:bg-amber-500 font-semibold">
+                        class="ml-auto px-4 py-2 text-sm bg-ateneo-gold text-white rounded-lg hover:bg-blue-700">
                         {% if edit_mode %}Save Changes{% else %}Publish Post{% endif %}
                     </button>
 
@@ -120,5 +162,27 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const startInput = document.querySelector('input[name="event_start"]');
+    const endInput = document.querySelector('input[name="event_end"]');
+
+    if (!startInput || !endInput) return;
+
+    // Get current datetime in format required by datetime-local
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const nowStr = now.toISOString().slice(0,16);
+
+    // Prevent past selection
+    startInput.min = nowStr;
+
+    // When start changes, update end min
+    startInput.addEventListener("change", function () {
+        endInput.min = startInput.value;
+    });
+});
+</script>
 
 {% endblock %}
