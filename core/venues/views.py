@@ -7,6 +7,7 @@ from users.models import AdminOfficeProfile, User
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 
+#Main page for venue actions
 @login_required
 def venue_type_choice(request):
     return render(request, 'venues/venue_type_choice.html', {
@@ -42,6 +43,7 @@ def reservation_request(request, venue_id):
     venue = Venue.objects.get(id=venue_id)
     if request.method == 'POST':
         reservation = ReservationRequest(venue=venue)
+        #Create instance to keep track of which venue was selected
         form = ReservationRequestForm(request.POST, instance = reservation)
         if form.is_valid():
             reservation = form.save(commit=False)
@@ -78,6 +80,7 @@ def avail_calendar(request, venue_id):
 
 @login_required
 def review_reservations(request):
+    #Only admins can access
     try:
         admin_profile = request.user.admin_profile
     except AdminOfficeProfile.DoesNotExist:
@@ -89,6 +92,7 @@ def review_reservations(request):
         action = request.POST.get('action')
         res_request = get_object_or_404(ReservationRequest, id=reservation_id)
 
+        #Updates
         if action == 'approve':
             ReservationModel.objects.create(
                 venue = res_request.venue,
