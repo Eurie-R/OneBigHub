@@ -109,6 +109,10 @@
                     {{ post.body }}
                 </p>
 
+                {% if post.picture %}
+                    <img src="{{ post.picture.url }}" alt="{{ post.title }}" class="mt-3 rounded-lg w-full max-h-64 object-cover">
+                {% endif %}
+
                 <div class="mt-4 text-ateneo-blue text-sm font-medium hover:underline">
                     View details →
                 </div>
