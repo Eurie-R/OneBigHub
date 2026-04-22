@@ -26,6 +26,10 @@
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Venue</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Date & Time</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Contact Number</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Email Address</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Pax</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Purpose</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>
                 </tr>
             </thead>
@@ -40,6 +44,18 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.date }} • {{ res.start }} – {{ res.end }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ res.contact_number }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ res.email_address }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ res.pax }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {{ res.purpose }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                         <form method="POST" class="flex gap-2">
