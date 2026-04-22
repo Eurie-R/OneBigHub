@@ -43,7 +43,7 @@ class ReservationModel(models.Model):
     def __str__(self):
         return f"{self.venue} booked on {self.date} from {self.start} - {self.end}"
 
-
+#Form that users must fill out to reserve a venue
 class ReservationRequest(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
