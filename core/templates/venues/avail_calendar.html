@@ -11,10 +11,22 @@
             <p class="text-gray-500 mt-1">Check existing bookings for this venue</p>
         </div>
 
-        <a href="{% url 'venues:venue_type_choice' %}"
-           class="text-sm text-ateneo-blue hover:underline">
-            ← Back
-        </a>
+        {% if request.GET.from == "type1" %}
+            <a href="{% url 'venues:type_1_list' %}"
+            class="text-sm text-ateneo-blue hover:underline">
+                ← Back
+            </a>
+        {% elif request.GET.from == "type2" %}
+            <a href="{% url 'venues:type_2_list' %}"
+            class="text-sm text-ateneo-blue hover:underline">
+                ← Back
+            </a>
+        {% else %}
+            <a href="{% url 'venues:venue_type_choice' %}"
+            class="text-sm text-ateneo-blue hover:underline">
+                ← Back
+            </a>
+        {% endif %}
     </div>
 
     <!-- Reservations List -->

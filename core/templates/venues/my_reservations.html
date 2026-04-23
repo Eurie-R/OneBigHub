@@ -22,7 +22,7 @@
 
         {% if reservations %}
             {% for res in reservations %}
-            <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 flex justify-between items-center hover:shadow-md transition">
+            <div class="relative bg-white border border-gray-100 rounded-2xl shadow-sm p-5 hover:shadow-md transition">
 
                 <!-- Info -->
                 <div>
@@ -33,22 +33,35 @@
                     <p class="text-sm text-gray-500 mt-1">
                         {{ res.date }} • {{ res.start }} – {{ res.end }}
                     </p>
+
+                    <div class="text-sm text-gray-600 mt-2 space-y-1">
+
+                        <p><span class="font-medium">Name:</span> {{ res.first_name }} {{ res.last_name }}</p>
+                        <p><span class="font-medium">Contact:</span> {{ res.contact_number }}</p>
+                        <p><span class="font-medium">Email:</span> {{ res.email_address }}</p>
+                        <p><span class="font-medium">Purpose:</span> {{ res.purpose }}</p>
+                        <p><span class="font-medium">Pax:</span> {{ res.pax }}</p>
+
+                    </div>
                 </div>
 
                 <!-- Status Badge -->
-                <div>
-                    {% if res.status == "approved" %}
+                <div class="absolute top-4 right-4">
+                    {% if res.status == "Approved" %}
                         <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
                             Approved
                         </span>
-                    {% elif res.status == "pending" %}
+
+                    {% elif res.status == "Pending" %}
                         <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">
                             Pending
                         </span>
-                    {% elif res.status == "rejected" %}
+
+                    {% elif res.status == "Rejected" %}
                         <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
                             Rejected
                         </span>
+
                     {% else %}
                         <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
                             {{ res.status }}

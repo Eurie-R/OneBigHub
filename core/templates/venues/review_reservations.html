@@ -21,6 +21,7 @@
     <!-- Table -->
     <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
+
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
@@ -30,49 +31,96 @@
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Email Address</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Pax</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Purpose</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>
                 </tr>
             </thead>
+
             <tbody class="divide-y divide-gray-100">
+
                 {% for res in reservations %}
                 <tr class="hover:bg-gray-50">
+
+                    <!-- Name -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                         {{ res.first_name }} {{ res.last_name }}
                     </td>
+
+                    <!-- Venue -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                         {{ res.venue.name }}
                     </td>
+
+                    <!-- Date -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.date }} • {{ res.start }} – {{ res.end }}
                     </td>
+
+                    <!-- Contact -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.contact_number }}
                     </td>
+
+                    <!-- Email -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.email_address }}
                     </td>
+
+                    <!-- Pax -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.pax }}
                     </td>
+
+                    <!-- Purpose -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ res.purpose }}
                     </td>
+
+                    <!-- Status -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+
+                        {% if res.status == "Approved" %}
+                            <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                                Approved
+                            </span>
+
+                        {% elif res.status == "Rejected" %}
+                            <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                                Rejected
+                            </span>
+
+                        {% else %}
+                            <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">
+                                Pending
+                            </span>
+                        {% endif %}
+
+                    </td>
+
+                    <!-- Action -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
+
                         <form method="POST" class="flex gap-2">
                             {% csrf_token %}
                             <input type="hidden" name="reservation_id" value="{{ res.id }}">
+
                             <button type="submit" name="action" value="approve"
                                     class="px-3 py-1 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition text-sm">
                                 Approve
                             </button>
+
                             <button type="submit" name="action" value="reject"
                                     class="px-3 py-1 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition text-sm">
                                 Reject
                             </button>
+
                         </form>
+
                     </td>
+
                 </tr>
                 {% endfor %}
+
             </tbody>
         </table>
     </div>

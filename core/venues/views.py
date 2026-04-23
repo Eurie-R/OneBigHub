@@ -101,7 +101,7 @@ def review_reservations(request):
                 end = res_request.end,
                 status = ReservationModel.BOOKED
             )
-            res_request.status = 'Approved'
+            res_request.status = ReservationRequest.APPROVED
             messages.success(request, "Reservation Approved!")
         elif action == 'reject':
             ReservationModel.objects.create(
@@ -111,13 +111,13 @@ def review_reservations(request):
                 end = res_request.end,
                 status = ReservationModel.REJECTED
             )
-            res_request.status = 'Rejected'
+            res_request.status = ReservationRequest.REJECTED
             messages.success(request, "Reservation Rejected.")
         res_request.save()
         
         return redirect('venues:review_reservations')
 
-    pending_reservations = ReservationRequest.objects.filter(status='Pending')
+    pending_reservations = ReservationRequest.objects.all().order_by('-date')
     return render(request, 'venues/review_reservations.html', {
         "reservations": pending_reservations,
         "current_page": "venues"
@@ -130,35 +130,21 @@ def my_reservations(request):
 
     #Filters and checks for reservations models under each status type
     for res in my_res:
-        approved = ReservationModel.objects.filter(
-            venue = res.venue,
-            date = res.date,
-            start = res.start,
-            end = res.end,
-            status = ReservationModel.BOOKED
-        ).exists()
-        
-        rejected = ReservationModel.objects.filter(
-            venue = res.venue,
-            date = res.date,
-            start = res.start,
-            end = res.end,
-            status = ReservationModel.REJECTED
-        ).exists()
-
-        if approved:
-            status = "Approved!"
-        elif rejected:
-            status = "Rejected!"
-        else:
-            status = "Pending."
+        status = res.status
     
         filtered_res.append({
             'venue': res.venue.name,
             'date': res.date,
             'start': res.start,
             'end': res.end,
-            'status': status
+            'status': res.status,
+
+            'first_name': res.first_name,
+            'last_name': res.last_name,
+            'contact_number': res.contact_number,
+            'email_address': res.email_address,
+            'purpose': res.purpose,
+            'pax': res.pax,
         })
 
     return render(request, 'venues/my_reservations.html', {
